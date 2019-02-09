@@ -1,5 +1,5 @@
-from CiaShopServer.service.request import Request
-from CiaShopServer.model.response import Response
+from CiaShopServer.server.service.request import Request
+from CiaShopServer.server.model import Response
 
 
 def read_token_archive(archive, key):

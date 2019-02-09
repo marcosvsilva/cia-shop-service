@@ -1,10 +1,11 @@
 import json
+import pprint
 
 
-class Response:
+class Response(object):
 
-    def __init__(self, response):
-        self.json = json.loads(response.text)
+    def __init__(self, request):
+        self.json = json.loads(request.text)
 
-    def print(self):
-        print(json)
+    def printr(self):
+        pprint.pprint(self.json)

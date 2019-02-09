@@ -2,7 +2,7 @@
 
 __version__ = '0.1'
 
-from CiaShopServer import app
+from CiaShopServer.server import app
 
 if __name__ == '__main__':
     app.run('0.0.0.0', debug=True)

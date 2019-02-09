@@ -3,7 +3,11 @@
 __version__ = '0.1'
 
 from flask import Flask
-from CiaShopServer.server.application import *
 
 app = Flask('CiaShopAPI')
 app.config['SECRET_KEY'] = 'random'
+
+import CiaShopServer.server.controller
+import CiaShopServer.server.model
+import CiaShopServer.server.service
+import CiaShopServer.server.application

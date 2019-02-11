@@ -1,6 +1,7 @@
 class DiscountsFess:
 
     def __init__(self, response):
+        self.response = response
         self.code = response.by_key('code')
         self.type = response.by_key('type')
         self.value = response.by_key_float('value')

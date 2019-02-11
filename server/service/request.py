@@ -1,8 +1,9 @@
 from CiaShopServer.server.model.response import Response
+import json
 import requests
 
 
-class Request(object):
+class Request:
 
     def __init__(self, token, store_name):
         self.token = token
@@ -23,8 +24,14 @@ class Request(object):
 
     def get_list(self, list):
         url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, list)
-        return self.request.get(url_request)
+        request = self.request.get(url_request)
+        json_request = json.loads(request.text)
+
+        list_response = []
+        for json_file in json_request:
+            list_response.append(Response(json_file))
+
+        return list_response
 
     def get_orders(self):
-        resquest = self.get_list('orders')
-        return Response(resquest.text)
+        return self.get_list('orders')

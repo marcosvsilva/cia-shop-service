@@ -1,7 +1,7 @@
 from CiaShopServer.server.model.discounts_fees import DiscountsFess
 
 
-class Order(object):
+class Order:
 
     def __init__(self, response):
         self.response = response
@@ -20,7 +20,7 @@ class Order(object):
 
     def get_discounts_fees(self):
         discounts_fees = []
-        for discount_fee in self.reponse.by_key('discountsAndFees'):
+        for discount_fee in self.response.by_key('discountsAndFees'):
             discounts_fees.append(DiscountsFess(discount_fee))
 
         return discounts_fees

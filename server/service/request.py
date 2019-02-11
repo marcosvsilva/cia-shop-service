@@ -1,3 +1,4 @@
+from CiaShopServer.server.model.response import Response
 import requests
 
 
@@ -20,6 +21,10 @@ class Request(object):
         self.request.headers.update(authorization)
         self.request.headers.update(content_type)
 
-    def get_orders(self):
-        url_request = '{}://{}/api/{}/orders'.format(self.protocol, self.store_name, self.version_api)
+    def get_list(self, list):
+        url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, list)
         return self.request.get(url_request)
+
+    def get_orders(self):
+        resquest = self.get_list('orders')
+        return Response(resquest.text)

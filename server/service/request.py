@@ -3,7 +3,7 @@ import json
 import requests
 
 
-class Request:
+class Request(object):
 
     def __init__(self, token, store_name):
         self.token = token

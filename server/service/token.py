@@ -1,4 +1,4 @@
-class Token:
+class Token(object):
 
     def __init__(self):
         self.archive = "../key.token"

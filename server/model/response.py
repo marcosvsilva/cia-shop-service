@@ -1,9 +1,8 @@
-import json
 import pprint
 from datetime import datetime
 
 
-class Response:
+class Response(object):
 
     def __init__(self, json_file):
         self.json_file = json_file
@@ -22,6 +21,14 @@ class Response:
 
     def by_key_date(self, key):
         return self.parse_date(self.by_key(key))
+
+    def by_key_response(self, key):
+        list_response_key = []
+
+        for json_file in self.by_key(key):
+            list_response_key.append(Response(json_file))
+
+        return list_response_key
 
     @staticmethod
     def parse_date(date):

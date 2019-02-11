@@ -3,7 +3,7 @@ from CiaShopServer.server.service.token import Token
 from CiaShopServer.server.model.order import Order
 
 
-class OrderController:
+class OrderController(object):
 
     def __init__(self):
         self.token = Token()

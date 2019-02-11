@@ -103,5 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# PyCharm environment
+/.idea
+
 # Keys and Tokens CiaShopAPI
 *.token

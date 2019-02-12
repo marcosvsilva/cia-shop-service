@@ -32,6 +32,3 @@ class Request(object):
             list_response.append(Response(json_file))
 
         return list_response
-
-    def get_orders(self):
-        return self.get_list('orders')

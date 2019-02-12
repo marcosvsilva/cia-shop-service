@@ -14,13 +14,29 @@ class Response(object):
         return self.json_file[key]
 
     def by_key_float(self, key):
-        return float(self.by_key(key))
+        result = 0
+        if self.is_valid(self.by_key(key)):
+            result = float(self.by_key(key))
+
+        return result
 
     def by_key_int(self, key):
-        return int(self.by_key_float(key))
+        result = int(self.by_key_float(key))
+        return result
 
     def by_key_date(self, key):
         return self.parse_date(self.by_key(key))
+
+    def by_key_bool(self, key):
+        return self.by_key(key) == 'true'
+
+    def by_key_list(self, key):
+        list = []
+
+        for json_file in self.by_key(key):
+            list.append(json_file)
+
+        return list
 
     def by_key_response(self, key):
         list_response_key = []
@@ -38,5 +54,14 @@ class Response(object):
                 result = datetime.strptime(date, '%Y-%m-%d')
         except:
             result = None
+
+        return result
+
+    @staticmethod
+    def is_valid(number):
+        result = False
+        if number is not None:
+            if number != '':
+                result = True
 
         return result

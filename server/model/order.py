@@ -1,6 +1,3 @@
-from CiaShopServer.server.model.discounts_fees import DiscountsFess
-
-
 class Order(object):
 
     def __init__(self, response):
@@ -21,8 +18,8 @@ class Order(object):
     def get_discounts_fees(self):
         discounts_fees_response = self.response.by_key_response('discountsAndFees')
         discounts_fees = []
-        for discount_fee in discounts_fees_response:
-            discounts_fees.append(DiscountsFess(discount_fee))
+        for response in discounts_fees_response:
+            discounts_fees.append(DiscountsFess(response))
 
         return discounts_fees
 
@@ -43,3 +40,13 @@ class Order(object):
             print('Discount value: {}'.format(discont_fee.value))
             print('Discount description: {}'.format(discont_fee.description))
             print('Discount source: {}'.format(discont_fee.source))
+
+
+class DiscountsFess(object):
+
+    def __init__(self, response):
+        self.response = response
+        self.type = response.by_key('type')
+        self.value = response.by_key_float('value')
+        self.description = response.by_key('description')
+        self.source = response.by_key('source')

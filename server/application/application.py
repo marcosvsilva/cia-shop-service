@@ -20,7 +20,7 @@ for order in orders:
 
 for product in products:
     print('-------------------')
-    print('Print orders list in {}'.format(token.get_store_name()))
+    print('Print product list in {}'.format(token.get_store_name()))
     product.print_product()
     print('-------------------')
     print('\n')

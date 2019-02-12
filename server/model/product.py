@@ -7,7 +7,7 @@ class Product(object):
         self.updatedAt = response.by_key_date('updatedAt')
         self.name = response.by_key('name')
         self.shortDescription = response.by_key('shortDescription')
-        #self.brand = self.get_brand()
+        self.brand = response.by_key_dict('brand', 'name')
         self.filters = self.get_filters()
         self.preSaleDateStart = response.by_key_date('preSaleDateStart')
         self.releaseDate = response.by_key_date('releaseDate')
@@ -30,14 +30,6 @@ class Product(object):
         self.discountDateStart = response.by_key_date('discountDateStart')
         self.discountDateEnd = response.by_key_date('discountDateEnd')
 
-    def get_brand(self):
-        brand_response = self.response.by_key_response('brand')
-        brand = []
-        for response in brand_response:
-            brand.append(Brand(response))
-
-        return brand
-
     def get_filters(self):
         filters_response = self.response.by_key_response('filters')
         filters = []
@@ -52,9 +44,7 @@ class Product(object):
         print('Prodct updatedAt: {}'.format(self.updatedAt))
         print('Prodct name: {}'.format(self.name))
         print('Prodct shortDescription: {}'.format(self.shortDescription))
-
-        #for brand in self.brand:
-            #print('Brand name: {}'.format(brand.name))
+        print('Prodct brand: {}'.format(self.brand))
 
         for filter in self.filters:
             print('Filer name: {}'.format(filter.name))
@@ -79,13 +69,6 @@ class Product(object):
         print('Prodct discountType: {}'.format(self.discountType))
         print('Prodct discountDateStart: {}'.format(self.discountDateStart))
         print('Prodct discountDateEnd: {}'.format(self.discountDateEnd))
-
-
-class Brand(object):
-
-    def __init__(self, response):
-        self.response = response
-        self.name = response.by_key('name')
 
 
 class Filter(object):

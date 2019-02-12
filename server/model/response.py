@@ -30,6 +30,9 @@ class Response(object):
     def by_key_bool(self, key):
         return self.by_key(key) == 'true'
 
+    def by_key_dict(self, key, value):
+        return self.by_key(key)[value]
+
     def by_key_list(self, key):
         list = []
 

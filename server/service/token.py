@@ -1,7 +1,7 @@
 class Token(object):
 
     def __init__(self):
-        self.archive = "../key.token"
+        self.archive = "..\key.token"
         self.store_name = self.read_token_archive('store_name')
         self.token = self.read_token_archive('token')
 

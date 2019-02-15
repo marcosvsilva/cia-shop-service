@@ -1,4 +1,4 @@
-from CiaShopServer.server.model.response import Response
+from server.model.response import Response
 import json
 import requests
 

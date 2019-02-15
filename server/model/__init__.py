@@ -1,2 +1,2 @@
-from CiaShopServer.server import app
-from CiaShopServer.server.model import *
+from server import app
+from server.model import *

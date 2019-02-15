@@ -1,6 +1,6 @@
-from CiaShopServer.server.service.request import Request
-from CiaShopServer.server.service.token import Token
-from CiaShopServer.server.model.product import Product
+from server.service.request import Request
+from server.service.token import Token
+from server.model.product import Product
 
 
 class ProductController(object):

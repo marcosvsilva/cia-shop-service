@@ -1,6 +1,6 @@
-from CiaShopServer.server.controller.order_controller import OrderController
-from CiaShopServer.server.controller.product_controller import ProductController
-from CiaShopServer.server.service.token import Token
+from server.controller.order_controller import OrderController
+from server.controller.product_controller import ProductController
+from server.service.token import Token
 
 token = Token()
 

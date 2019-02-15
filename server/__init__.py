@@ -7,7 +7,7 @@ from flask import Flask
 app = Flask('CiaShopAPI')
 app.config['SECRET_KEY'] = 'random'
 
-import CiaShopServer.server.controller
-import CiaShopServer.server.model
-import CiaShopServer.server.service
-import CiaShopServer.server.application
+import server.controller
+import server.model
+import server.service
+import server.application

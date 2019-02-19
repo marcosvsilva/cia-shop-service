@@ -25,9 +25,4 @@ for product in products:
     print('-------------------')
     print('\n')
 
-for product in products:
-    print('-------------------')
-    print('Print product list in {}'.format(token.get_store_name()))
-    product.print_product()
-    print('-------------------')
-    print('\n')
+teste

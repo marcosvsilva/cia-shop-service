@@ -24,5 +24,3 @@ for product in products:
     product.print_product()
     print('-------------------')
     print('\n')
-
-teste

@@ -1,6 +1,5 @@
 # CiaShopServer
 ### Service developed to communicate with the Ciashop API.
-#### Create by: Marcos Vinicius Ribeiro Silva
 #### A permissive license similar to the [BSD 2-Clause License](https://github.com/marcosvsilva/CiaShopServer/blob/master/LICENSE)
 
 Service developed to communicate with the API offered by the ciashop platform to integrate any ERP that uses relational database with the platform.
@@ -11,7 +10,7 @@ The architecture defined to treat the external components was defined as:
 
 ![alt text](https://github.com/marcosvsilva/CiaShopServer/blob/master/docs/ComponentDiagram.jpg "ComponentDiagram")
 
-The service works with MVCS (Model, View, Controller and Server) architecture and still uses a persistence layer as vision, which can be reimplemented to work with any data architecture of other ERTPs.
+The service works with MVCS (Model, View, Controller and Service) architecture and still uses a persistence layer as vision, which can be reimplemented to work with any data architecture of other ERPs.
 
 ![alt text](https://github.com/marcosvsilva/CiaShopServer/blob/master/docs/ClassDiagram.jpg "ClassDiagram")
 

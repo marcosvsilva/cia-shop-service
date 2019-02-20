@@ -13,7 +13,7 @@ The architecture defined to treat the external components was defined as:
 
 The service works with MVCS (Model, View, Controller and Server) architecture and still uses a persistence layer as vision, which can be reimplemented to work with any data architecture of other ERTPs.
 
-![alt text](https://github.com/marcosvsilva/CiaShopServer/blob/master/docs/ComponentDiagram.jpg "ClassDiagram")
+![alt text](https://github.com/marcosvsilva/CiaShopServer/blob/master/docs/ClassDiagram.jpg "ClassDiagram")
 
 The project is still in the acceptance and implementation phase. It will be worked on continuous improvement, having the first sprint contemplating all generic architecture.
 

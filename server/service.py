@@ -1,7 +1,5 @@
-import time
-import random
-from pathlib import Path
 from server.win_service import WinService
+from server.apllication import Application
 
 
 class Service(WinService):
@@ -16,11 +14,9 @@ class Service(WinService):
         self.isrunning = False
 
     def main(self):
+        application = Application()
         while self.isrunning:
-            random.seed()
-            x = random.randint(1, 1000000)
-            Path(f'c:\\test\\{x}.txt').touch()
-            time.sleep(5)
+            application.syncronize()
 
 
 if __name__ == '__main__':

@@ -1,10 +1,9 @@
-from server import app
-from flask import render_template, request
+from server.service.request import Request
+from server.service.token import Token
 
-@app.route('/')
-def start():
-    return render_template('index.html')
 
-@app.route('/consumerApiCiaShop')
-def printer():
-    return render_template('index.html')
+class Controller(object):
+
+    def __init__(self):
+        self.token = Token()
+        self.request = Request(store_name=self.token.get_store_name(), token=self.token.get_token())

@@ -1,13 +1,11 @@
-from server.service.request import Request
-from server.service.token import Token
+from server.controller.controller import Controller
 from server.model.product import Product
 
 
-class ProductController(object):
+class ProductController(Controller):
 
     def __init__(self):
-        self.token = Token()
-        self.request = Request(store_name=self.token.get_store_name(), token=self.token.get_token())
+        super().__init__()
         self.products = self.request.get_list('products')
 
     def get_orders(self):

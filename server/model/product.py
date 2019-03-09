@@ -16,19 +16,6 @@ class Product(object):
         self.bonus = response.by_key_int('bonus')
         self.sortOrder = response.by_key_int('sortOrder')
         self.erpId = response.by_key('erpId')
-        self.mainDepartmentId = response.by_key_int('mainDepartmentId')
-        self.departmentsIds = response.by_key_list('departmentsIds')
-        self.installmentId = response.by_key_int('installmentId')
-        self.sellOutOfStock = response.by_key_bool('sellOutOfStock')
-        self.sellOutOfStockMessage = response.by_key('sellOutOfStockMessage')
-        self.zoom = response.by_key_bool('zoom')
-        self.variantConfirmationAlert = response.by_key_bool('variantConfirmationAlert')
-        self.contractAgreementMandatory = response.by_key_bool('contractAgreementMandatory')
-        self.contractDescription = response.by_key('contractDescription')
-        self.urlKey = response.by_key('urlKey')
-        self.discountType = response.by_key('discountType')
-        self.discountDateStart = response.by_key_date('discountDateStart')
-        self.discountDateEnd = response.by_key_date('discountDateEnd')
 
     def get_filters(self):
         filters_response = self.response.by_key_response('filters')
@@ -39,36 +26,7 @@ class Product(object):
         return filters
 
     def print_product(self):
-        print('Prodct id: {}'.format(self.id))
-        print('Prodct createdAt: {}'.format(self.createdAt))
-        print('Prodct updatedAt: {}'.format(self.updatedAt))
-        print('Prodct name: {}'.format(self.name))
-        print('Prodct shortDescription: {}'.format(self.shortDescription))
-        print('Prodct brand: {}'.format(self.brand))
-
-        for filter in self.filters:
-            print('Filer name: {}'.format(filter.name))
-            print('Filer values: {}'.format(filter.values))
-
-        print('Prodct preSaleDateStart: {}'.format(self.preSaleDateStart))
-        print('Prodct releaseDate: {}'.format(self.releaseDate))
-        print('Prodct releaseDateEnd: {}'.format(self.releaseDateEnd))
-        print('Prodct blocked: {}'.format(self.blocked))
-        print('Prodct bonus: {}'.format(self.bonus))
-        print('Prodct sortOrder: {}'.format(self.sortOrder))
-        print('Prodct erpId: {}'.format(self.erpId))
-        print('Prodct departmentsIds: {}'.format(self.departmentsIds))
-        print('Prodct installmentId: {}'.format(self.installmentId))
-        print('Prodct sellOutOfStock: {}'.format(self.sellOutOfStock))
-        print('Prodct sellOutOfStockMessage: {}'.format(self.sellOutOfStockMessage))
-        print('Prodct zoom: {}'.format(self.zoom))
-        print('Prodct variantConfirmationAlert: {}'.format(self.variantConfirmationAlert))
-        print('Prodct contractAgreementMandatory: {}'.format(self.contractAgreementMandatory))
-        print('Prodct contractDescription: {}'.format(self.contractDescription))
-        print('Prodct urlKey: {}'.format(self.urlKey))
-        print('Prodct discountType: {}'.format(self.discountType))
-        print('Prodct discountDateStart: {}'.format(self.discountDateStart))
-        print('Prodct discountDateEnd: {}'.format(self.discountDateEnd))
+        self.response.print_json()
 
 
 class Filter(object):

@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
+from server.controller.product_controller import ProductController
+from server.service.token import Token
 
-__version__ = '0.1'
+token = Token()
 
-from flask import Flask
+product_controller = ProductController()
+products = product_controller.get_orders()
 
-app = Flask('CiaShopAPI')
-app.config['SECRET_KEY'] = 'random'
-
-import server.controller
-import server.model
-import server.service
-import server.application
+for product in products:
+    print('-------------------')
+    print('Print product list in {}'.format(token.get_store_name()))
+    product.print_product()
+    print('-------------------')
+    print('\n')

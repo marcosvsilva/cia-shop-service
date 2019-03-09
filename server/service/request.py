@@ -1,4 +1,4 @@
-from server.model.response import Response
+from server.model import Response
 import json
 import requests
 

@@ -1,5 +1,4 @@
-from server.service.request import Request
-from server.service.token import Token
+from server.service import Request, Token
 
 
 class Controller(object):

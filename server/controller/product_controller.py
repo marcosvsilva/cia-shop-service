@@ -1,5 +1,5 @@
-from server.controller.controller import Controller
-from server.model.product import Product
+from server.controller import Controller
+from server.model import Product
 
 
 class ProductController(Controller):

@@ -7,7 +7,7 @@ class Config(object):
         self.__config = json.loads(self.read_config_archive())
         self.log_path = self.read_key_log_config('log_path')
         self.log_name = self.read_key_log_config('log_name')
-        self.log_extension = self.read_key_log_config('log_extension')
+        self.log_extension = self.read_key_log_config('log_extension').replace('.', '')
 
     def read_key_log_config(self, key_log):
         log_json = self.read_keys_config('log')

@@ -1,4 +1,5 @@
 from server.controller.product_controller import ProductController
+from server.service.config import Config
 
 
 class Application(object):

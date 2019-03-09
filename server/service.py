@@ -1,5 +1,5 @@
 from server.win_service import WinService
-from server.apllication import Application
+from server.application import Application
 
 
 class Service(WinService):

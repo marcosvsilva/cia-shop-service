@@ -6,7 +6,7 @@ class ProductController(Controller):
 
     def __init__(self):
         super().__init__()
-        self.products = self.request.get_list('products')
+        self.products = self._request.get_list('products')
 
     def get_orders(self):
         products = []

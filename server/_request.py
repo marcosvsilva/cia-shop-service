@@ -23,14 +23,26 @@ class Request:
         self.request.headers.update(authorization)
         self.request.headers.update(content_type)
 
-    def get_list(self, list):
-        url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, list)
+    def get_list(self, table, max_id=0):
+        if max_id > 0:
+            url_request = '{}://{}/api/{}/{}/?minId={}'.format(self.protocol, self.store_name, self.version_api, table,
+                                                               max_id)
+        else:
+            url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, table)
+
         request = self.request.get(url_request)
         json_request = json.loads(request.text)
 
         list_response = []
+        max_id_response = 0
         for json_file in json_request:
-            list_response.append(Response(json_file))
+            response = Response(json_file)
+            max_id_response = response.get_id()
+            if max_id_response != max_id:
+                list_response.append(response)
+
+        if len(json_request) == 50:
+            self.get_list(table, max_id_response)
 
         return list_response
 
@@ -42,6 +54,9 @@ class Response:
 
     def print_json(self):
         pprint.pprint(self.json_file)
+
+    def get_id(self):
+        return self.json_file['id']
 
     def by_key(self, key):
         return self.json_file[key]
@@ -67,12 +82,12 @@ class Response:
         return self.by_key(key)[value]
 
     def by_key_list(self, key):
-        list = []
+        result = []
 
         for json_file in self.by_key(key):
-            list.append(json_file)
+            result.append(json_file)
 
-        return list
+        return result
 
     def by_key_response(self, key):
         list_response_key = []

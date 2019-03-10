@@ -16,8 +16,10 @@ class ProductController(Controller):
         super().__init__()
         self.products = self._request.get_list('products')
 
-    def get_orders(self):
+    def get_products(self):
         products = []
         for product in self.products:
             products.append(Product(product))
         return products
+
+

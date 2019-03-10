@@ -1,5 +1,13 @@
-from server.controller import Controller
-from server.model import Product
+from _config import Token
+from _request import Request
+from _models import Product
+
+
+class Controller:
+
+    def __init__(self):
+        token = Token()
+        self._request = Request(store_name=token.store_name, token=token.token)
 
 
 class ProductController(Controller):

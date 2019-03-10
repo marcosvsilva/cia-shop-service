@@ -1,13 +1,11 @@
 import pyodbc
 import pandas as pd
-from server.service import Config
-from server.application import Log
+from _config import Config, generate_log
 
 
-class Connection(object):
+class Connection:
 
     def __init__(self):
-        self.__log = Log()
         config = Config()
 
         try:
@@ -18,11 +16,11 @@ class Connection(object):
                                                "uid={};".format(config.database_uid) +
                                                "pwd={};".format(config.database_pwd))
         except pyodbc.Error as fail:
-            self.__log.generate_log('Exception Connection, Error : {}'.format(fail))
+            generate_log('Exception Connection, Error : {}'.format(fail))
 
     def sql_query(self, query):
         try:
             query = pd.read_sql_query(query, self.__connection)
             return query
         except Exception as fail:
-            self.__log.generate_log('Exception Query, Error: {}'.format(fail))
+            generate_log('Exception Query, Error: {}'.format(fail))

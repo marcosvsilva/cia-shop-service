@@ -1,4 +1,4 @@
-class Product(object):
+class Product:
 
     def __init__(self, response):
         self.response = response

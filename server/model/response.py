@@ -1,7 +1,6 @@
 import pprint
 from datetime import datetime
 
-
 class Response(object):
 
     def __init__(self, json_file):

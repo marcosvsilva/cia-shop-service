@@ -1,6 +1,6 @@
 from server.controller import ProductController
-from server.service import Config
-from server.application import Log
+from server.service import Config, Connection
+from server.application.log import Log
 
 
 class Application(object):
@@ -11,8 +11,8 @@ class Application(object):
         self.__log = Log()
         self.__products = product_controller.get_orders()
 
-    def syncronize(self):
-        self.generate_log('start process')
+    def synchronize(self):
+        self.__log.generate_log('start process')
         for product in self.__products:
             self.__log.generate_log('print product')
             print('-------------------')
@@ -20,3 +20,9 @@ class Application(object):
             print('-------------------')
             print('\n')
 
+
+application = Application()
+application.synchronize()
+cnn = Connection()
+cnn.sql_query('select * from csi_produtos')
+print(cnn)

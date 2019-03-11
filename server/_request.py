@@ -30,6 +30,7 @@ class Request:
         else:
             url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, table)
 
+        print(url_request)
         request = self.request.get(url_request)
         json_request = json.loads(request.text)
 

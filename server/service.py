@@ -1,5 +1,6 @@
 from server import Application
 import socket
+import time
 import win32serviceutil
 import servicemanager
 import win32event
@@ -40,12 +41,8 @@ class WinService(win32serviceutil.ServiceFramework):
 
     def main(self):
         pass
-
-
-if __name__ == '__main__':
-    WinService.parse_command_line()
-
-
+		
+		
 class Service(WinService):
     _svc_name_ = 'CiaShopServer'
     _svc_display_name_ = 'CiaShop Consumer Api'
@@ -61,7 +58,9 @@ class Service(WinService):
         application = Application()
         while self.isrunning:
             application.synchronize()
+            time.sleep(15)
 
 
 if __name__ == '__main__':
-    Service.parse_command_line()
+    WinService.parse_command_line()
+	Service.parse_command_line()	

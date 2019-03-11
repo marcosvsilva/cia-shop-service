@@ -4,7 +4,7 @@ import datetime
 
 class Config:
 
-    def __init__(self, __path_config=None):
+    def __init__(self):
         self.__config = json.loads(read_config_archive())
         self.log_path = self.read_key_log_config('log_path')
         self.log_name = self.read_key_log_config('log_name')
@@ -62,3 +62,9 @@ def generate_log(log):
     log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
     with open(log_file, 'a') as file:
         file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.lower()))
+
+
+def get_table(table):
+    config = Config()
+    tables = config.read_keys_config('tables')
+    return tables[table]

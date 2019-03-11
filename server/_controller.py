@@ -34,6 +34,7 @@ class ProductController(Controller):
         sql_query = "SELECT PROD_CODIGO as id, PROD_ID_CIASHOP as erpId, '' as filters FROM CSI_PRODUTO"
         query = self._get_database(sql_query)
         products = []
-        for product in query:
-            products.append(Product(product))
+        for item in query:
+            product = Product(item)
+            products.append(product)
         return products

@@ -61,7 +61,7 @@ def generate_log(log):
     config = Config()
     log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
     with open(log_file, 'a') as file:
-        file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.lower()))
+        file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
 
 
 def get_table(table):

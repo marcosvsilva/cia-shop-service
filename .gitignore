@@ -108,3 +108,6 @@ venv.bak/
 
 # Keys and Tokens CiaShopAPI
 *.token
+
+# DataBase
+/database

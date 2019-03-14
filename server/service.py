@@ -41,8 +41,8 @@ class WinService(win32serviceutil.ServiceFramework):
 
     def main(self):
         pass
-		
-		
+
+
 class Service(WinService):
     _svc_name_ = 'CiaShopServer'
     _svc_display_name_ = 'CiaShop Consumer Api'
@@ -61,6 +61,5 @@ class Service(WinService):
             time.sleep(15)
 
 
-if __name__ == '__main__':
-    WinService.parse_command_line()
-	Service.parse_command_line()	
+if __name__ == '__main__':    
+	Service.parse_command_line()

@@ -111,3 +111,6 @@ venv.bak/
 
 # DataBase
 /database
+
+# Mac Files
+*.DS_Store

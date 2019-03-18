@@ -59,7 +59,11 @@ def read_token_archive(key):
 
 def generate_log(log):
     config = Config()
-    log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
+    if config.log_path != '':
+        log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
+    else:
+        log_file = '{}.{}'.format(config.log_name, config.log_extension)
+
     with open(log_file, 'a') as file:
         file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
 

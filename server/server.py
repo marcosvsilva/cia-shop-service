@@ -7,7 +7,7 @@ class Application:
     def __init__(self):
         product_controller = ProductController()
         self.__products = product_controller.get_products_api()
-        #self.__products_database = product_controller.get_products_database()
+        self.__products_database = product_controller.get_products_database()
 
     def synchronize(self):
         generate_log('start process')
@@ -19,7 +19,7 @@ class Application:
                 print('-------------------')
 
         for product in self.__products_database:
-            if False:
+            if True:
                 print('-------------------')
                 print(product.describe())
                 print('-------------------')

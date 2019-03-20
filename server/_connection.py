@@ -9,9 +9,11 @@ class Connection:
 
     def __init__(self):
         config = Config()
+        
+        driver = '/Library/Vertica/ODBC/lib/libverticaodbc.dylib'
 
         try:
-            self.__connection = pyodbc.connect("Driver={SQL Server Native Client 11.0};" +
+            self.__connection = pyodbc.connect("Driver={" + driver + "};" +
                                                "Server={};".format(config.database_server) +
                                                "Database={};".format(config.database) +
                                                "Trusted_Connection={};".format(config.database_trusted_connection) +

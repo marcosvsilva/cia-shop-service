@@ -14,6 +14,8 @@ class Config:
         self.database_trusted_connection = self.read_key_database_config('trusted_connection')
         self.database_uid = self.read_key_database_config('uid')
         self.database_pwd = self.read_key_database_config('pwd')
+        self.system_generate_log = self.read_key_system_config('generate_log') == 'yes'
+        self.system_print_url_request_log = self.read_key_system_config('print_url_request_log') == 'yes'
 
     def read_key_log_config(self, key_log):
         log_json = self.read_keys_config('log')
@@ -22,6 +24,10 @@ class Config:
     def read_key_database_config(self, key_log):
         log_json = self.read_keys_config('database')
         return log_json[key_log]
+    
+    def read_key_system_config(self, key_log):
+        log_json = self.read_keys_config('system')
+        return log_json[key_log]    
 
     def read_keys_config(self, key):
         config_json = self.__config
@@ -59,13 +65,15 @@ def read_token_archive(key):
 
 def generate_log(log):
     config = Config()
-    if config.log_path != '':
-        log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
-    else:
-        log_file = '{}.{}'.format(config.log_name, config.log_extension)
+    
+    if config.system_generate_log:
+        if config.log_path != '':
+            log_file = '{}\\{}.{}'.format(config.log_path, config.log_name, config.log_extension)
+        else:
+            log_file = '{}.{}'.format(config.log_name, config.log_extension)
 
-    with open(log_file, 'a') as file:
-        file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
+        with open(log_file, 'a') as file:
+            file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
 
 
 def get_table(table):

@@ -8,12 +8,10 @@ from _request import Response
 class Connection:
 
     def __init__(self):
-        config = Config()
-        
-        driver = '/Library/Vertica/ODBC/lib/libverticaodbc.dylib'
+        config = Config()        
 
         try:
-            self.__connection = pyodbc.connect("Driver={" + driver + "};" +
+            self.__connection = pyodbc.connect("Driver={SQL Server Native Client 11.0};" +
                                                "Server={};".format(config.database_server) +
                                                "Database={};".format(config.database) +
                                                "Trusted_Connection={};".format(config.database_trusted_connection) +
@@ -37,3 +35,10 @@ class Connection:
             generate_log('Exception Query, Error: {}'.format(fail))
 
         return responses
+
+
+def get_file_sql(file_name):
+    with open('sqls/{}'.format(file_name)) as file:
+        sql = file.read()
+    return sql
+        

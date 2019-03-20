@@ -1,7 +1,7 @@
 from _config import Token
 from _request import Request
 from _models import Product
-from _connection import Connection
+from _connection import Connection, get_file_sql
 
 
 class Controller:
@@ -22,19 +22,47 @@ class ProductController(Controller):
 
     def __init__(self):
         super().__init__()
+        self.__products_api = []        
+        self.__id_products_api = []
+        
+        self.__products_database = []
+        self.__id_products_database = []
 
     def get_products_api(self):
-        list_products = self._get_api('products')
-        products = []
-        for product in list_products:
-            products.append(Product(product))
-        return products
+        try:
+            list_products = self._get_api('products')        
+            
+            for product in list_products:            
+                product_item = Product(product)
+                self.__products_api.append(product_item)
+                self.__id_products_api.append(product_item.id)
+            
+            return self.__products_api
 
-    def get_products_database(self):
-        sql_query = "SELECT PROD_CODIGO as id, PROD_ID_CIASHOP as erpId, '' as filters FROM CSI_PRODUTO"
-        query = self._get_database(sql_query)
-        products = []
-        for item in query:
-            product = Product(item)
-            products.append(product)
-        return products
+        except:
+            return None            
+
+    def get_products_database(self):        
+        try:
+            products = self._get_database(get_file_sql('products.sql'))
+            filters = self._get_database(get_file_sql('filters.sql'))
+            
+            for product in products:
+                product_item = Product(product)
+                
+                for filter_item in filters:
+                    if filter_item.get_id == product_item.id:
+                        product_item.add_filters(filter_item)
+
+                self.__id_products_database.append(product_item.id)
+                self.__products_database.append(product_item)
+
+            return self.__products_database
+        except:
+            return None
+
+    def get_id_products_api(self):
+        return self.__id_products_api
+    
+    def get_id_products_database(self):
+        return self.__id_products_database

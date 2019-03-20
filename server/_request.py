@@ -1,6 +1,7 @@
 import json
 import requests
 import pprint
+from _config import Config, generate_log
 from datetime import datetime
 
 
@@ -30,6 +31,10 @@ class Request:
         else:
             url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, table)
         
+        config = Config()
+        if config.system_print_url_request_log:
+            generate_log('URL API REQUEST: {}'.format(url_request))
+
         request = self.request.get(url_request)
         json_request = json.loads(request.text)
 

@@ -1,5 +1,5 @@
 SELECT
-	PROD_CODIGO AS id,
+	PROD_CODIGO AS 'erpId',
 	FILTER_NAME as 'name',
 	FILTER_VALUE as 'values'
 FROM (

@@ -2,7 +2,6 @@ import pyodbc
 import pandas as pd
 import json
 from _config import Config, generate_log
-from _request import Response
 
 
 class Connection:
@@ -21,24 +20,16 @@ class Connection:
             generate_log('Exception Connection, Error : {}'.format(fail))
 
     def sql_query(self, sql_query):
-        responses = []
-
         try:
             query = pd.read_sql_query(sql_query, self.__connection)
-            json_file = json.loads(query.to_json(orient='records'))
-
-            for item in json_file:
-                response = Response(item)
-                responses.append(response)
-
+            json_file = json.loads(query.to_json(orient='records'))            
+            return json_file            
         except Exception as fail:
             generate_log('Exception Query, Error: {}'.format(fail))
-
-        return responses
+            return None
 
 
 def get_file_sql(file_name):
     with open('sqls/{}'.format(file_name)) as file:
         sql = file.read()
     return sql
-        

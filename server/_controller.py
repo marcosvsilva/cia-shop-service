@@ -22,7 +22,7 @@ class ProductController(Controller):
 
     def __init__(self):
         super().__init__()
-        self.__products_api = []        
+        self.__products_api = []
         self.__id_products_api = []
         
         self.__products_database = []
@@ -33,9 +33,7 @@ class ProductController(Controller):
             list_products = self._get_api('products')        
             
             for product in list_products:            
-                product_item = Product(product)
-                self.__products_api.append(product_item)
-                self.__id_products_api.append(product_item.id)
+                self.__products_api.append(product)
             
             return self.__products_api
 
@@ -44,12 +42,13 @@ class ProductController(Controller):
 
     def get_products_database(self):        
         try:
-            products = self._get_database(get_file_sql('products.sql'))
+            products = self._get_database(get_file_sql('products.sql'))            
             filters = self._get_database(get_file_sql('filters.sql'))
+
+            products = products.order('erpId')
+            filters = filters.order('id')
             
-            for product in products:
-                product_item = Product(product)
-                
+            for product in products:                            
                 for filter_item in filters:
                     if filter_item.get_id == product_item.id:
                         product_item.add_filters(filter_item)

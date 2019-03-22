@@ -23,7 +23,7 @@ class Connection:
         try:
             query = pd.read_sql_query(sql_query, self.__connection)
             json_file = json.loads(query.to_json(orient='records'))            
-            return json_file            
+            return json_file
         except Exception as fail:
             generate_log('Exception Query, Error: {}'.format(fail))
             return None

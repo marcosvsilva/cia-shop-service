@@ -6,16 +6,22 @@ class Config:
 
     def __init__(self):
         self.__config = json.loads(read_config_archive())
+
         self.log_path = self.read_key_log_config('log_path')
         self.log_name = self.read_key_log_config('log_name')
         self.log_extension = self.read_key_log_config('log_extension').replace('.', '')
+
         self.database = self.read_key_database_config('database')
         self.database_server = self.read_key_database_config('server')
         self.database_trusted_connection = self.read_key_database_config('trusted_connection')
         self.database_uid = self.read_key_database_config('uid')
         self.database_pwd = self.read_key_database_config('pwd')
+
         self.system_generate_log = self.read_key_system_config('generate_log') == 'yes'
         self.system_print_url_request_log = self.read_key_system_config('print_url_request_log') == 'yes'
+        self.system_export_requests_json = self.read_key_system_config('export_requests_json') == 'yes'
+
+        self.api_register_max_returns = self.read_key_api_config('register_max_returns')
 
     def read_key_log_config(self, key_log):
         log_json = self.read_keys_config('log')
@@ -27,7 +33,11 @@ class Config:
     
     def read_key_system_config(self, key_log):
         log_json = self.read_keys_config('system')
-        return log_json[key_log]    
+        return log_json[key_log]
+
+    def read_key_api_config(self, key_log):
+        log_json = self.read_keys_config('api')
+        return log_json[key_log]
 
     def read_keys_config(self, key):
         config_json = self.__config

@@ -33,12 +33,12 @@ class Request:
 
         config = Config()
         if config.system_print_url_request_log:
-            generate_log('URL API REQUEST: {}'.format(url_request))
+            generate_log('url api request: {}'.format(url_request))
 
         request = self.request.get(url_request)
         json_request = json.loads(request.text)
 
         if len(json_request) == config.api_register_max_returns:
-            json_request.append(self.get_list(table, json_request[config.api_register_max_returns-1]['id']))
-        
+            json_request + self.get_list(table, json_request[config.api_register_max_returns - 1]['id'])
+
         return json_request

@@ -1,6 +1,7 @@
 import json
-from _config import Config, Token, generate_log
+import time
 from _request import Request
+from _config import Config, Token, generate_log
 from _connection import Connection, get_file_sql
 
 
@@ -15,7 +16,7 @@ class Controller:
     def _get_api(self, table):
         try:
             json_file = self.__request.get_list(table)
-            self._export_json('api_{}.json'.format(table), json_file)
+            self._export_json('api_{}'.format(table), json_file)
             return json_file
         except Exception as fail:
             generate_log('fail to api request, table: {}, fail: {}!'.format(table, fail))
@@ -24,7 +25,7 @@ class Controller:
     def _get_database(self, sql_table, sql_query):
         try:
             json_file = self.__connection.sql_query(sql_query)
-            self._export_json('database_{}.json'.format(sql_table), json_file)
+            self._export_json('database_{}'.format(sql_table), json_file)
             return json_file
         except Exception as fail:
             generate_log('fail to database request, table: {}, fail: {}!'.format(sql_table, fail))
@@ -34,7 +35,7 @@ class Controller:
         try:
             if self.__config.system_export_requests_json:
                 if len(archive) > 1:
-                    with open(archive_name, 'w') as file:
+                    with open('{}.json'.format(archive_name), 'w') as file:
                         json.dump(archive, file)
                 else:
                     generate_log('archive {} is empty!'.format(archive_name))
@@ -53,7 +54,7 @@ class ProductController(Controller):
         json_api = self._get_api('products')
 
         if len(json_api) > 0:
-            #json_api = sorted(json_api, key=lambda k: k['erpId'])
+            json_api = sorted(json_api, key=lambda k: k['erpId'])
             return json_api
         else:
             return None
@@ -61,22 +62,31 @@ class ProductController(Controller):
     def get_products_database(self):
         try:
             products = self._get_database('products', get_file_sql('products.sql'))
-            filters = self._get_database('filter', get_file_sql('filters.sql'))            
+            filters_products = self._get_database('filter', get_file_sql('filters.sql'))
 
-            print('test')
-            for filter in filters:
+            if (len(products) > 0) and (len(filters_products) > 0):
                 for product in products:
-                    if filter['erpId'] == product['erpId']:
-                        new_filter = {'filter': {filter['name']: filter['values']}}
-                        product[filter] = json.loads(new_filter)
-                    elif filter['erpId'] > product['erpId']:
-                        break
-            print('test2')
+                    for filter_product in filters_products:
+                        if filter_product['erpId'] > product['erpId']:
+                            break
+                        if filter_product['erpId'] == product['erpId']:
+                            self.__add_filter_product(product, filter_product)
 
             self._export_json('database_products_final', products)
             return products
         except Exception as fail:
-            generate_log('falha ao buscar produtos do banco de dados, falha: {}!'.format(fail))
+            generate_log('fail to database request products, fail: {}!'.format(fail))
+            return None
+
+    @staticmethod
+    def __add_filter_product(product, filter_product):
+        list_filters = []
+        if 'filter' in product:
+            list_filters = product['filter']
+
+        list_filters.append({'name': filter_product['name'], 'values': [filter_product['values']]})
+        product['filter'] = list_filters
+        return product
 
 
 con = ProductController()

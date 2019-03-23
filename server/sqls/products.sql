@@ -1,6 +1,6 @@
 SELECT
     PROD_CODIGO as 'erpId',
-    CSI_ID as 'id'    
+    CSI_ID as 'id'
 FROM
     CSI_PRODUTO
 ORDER BY

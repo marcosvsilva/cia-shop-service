@@ -77,6 +77,7 @@ class ProductController(Controller):
 
             if (len(products) > 0) and (len(filters_products) > 0):
                 for product in products:
+                    product = self.__add_brand_product(product)
                     filters = filter(lambda x: x['erpId'] == product['erpId'], filters_products)
                     for filter_product in filters:
                         self.__add_filter_product(product, filter_product)
@@ -105,4 +106,10 @@ class ProductController(Controller):
 
         list_filters.append({'name': filter_product['name'], 'values': [filter_product['values']]})
         product['filter'] = list_filters
+        return product
+
+    @staticmethod
+    def __add_brand_product(product):
+        brand_value = product['brand']
+        product['brand'] = {'name': brand_value}
         return product

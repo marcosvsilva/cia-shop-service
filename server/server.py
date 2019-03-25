@@ -1,9 +1,9 @@
+import time
 from _controller import ProductController
-from _config import generate_log
+from _config import Config, generate_log
 
 actions = {
-    1: 'check database',
-    2: 'update api id database'
+    1: 'update api id database'
 }
 
 
@@ -11,40 +11,49 @@ class Application:
 
     def __init__(self):
         self._product_controller = ProductController()
-        self._products_api = self._product_controller.get_products_api()
-        self._products_database = self._product_controller.get_products_database()                
+        self._config = Config()
+        self._products_api = None
+        self._products_database = None
 
     def synchronize(self):
-        generate_log('start process synchronize')        
-        self.execute_action(actions[1])
-        self.execute_action(actions[2])
+        while self._config.system_active:
+            try:
+                generate_log('start process synchronize')
+                self._products_api = self._product_controller.get_products_api()
+                self._products_database = self._product_controller.get_products_database()
+                self.execute_action(actions[1])
+                time.sleep(self._config.system_sleep_timer_synchronize)
+            except Exception as fail:
+                generate_log('crash synchronize, fail: {}'.format(fail))
+                break
     
-    def execute_action(self, action):        
-        print(action)
+    def execute_action(self, action):
         generate_log('start process {}'.format(action))
 
         try:
             if action == actions[1]:
-                self.check_database()
+                self.update_api_id_database()
 
-            elif action == actions[2]:
-                self.update_api_id()
-
-        except:
-            generate_log('crash process {}'.format(action))
+        except Exception as fail:
+            generate_log('crash process {}, fail: {}'.format(action, fail))
         
         generate_log('finishing process {}'.format(action))
-
-
-    def check_database(self):
-        for product_api in self._products_api:
-            if product_api.id not in self._product_controller.get_id_products_database():
-                generate_log('product {} not in database'.format(product_api.id))                
     
-    def update_api_id(self):
-        list_update
-        
+    def update_api_id_database(self):
+        values_keys = {}
+        for product_database in self._products_database:
+            products_api = filter(lambda x: x['erpId'] == product_database['erpId'], self._products_api)
 
+            if len(list(products_api)) < 1:
+                generate_log('product {} not found in ciashop'.format(product_database['erpId']))
+
+            for product_api in products_api:
+                if product_database['id'] != product_api['id']:
+                    generate_log('update product {} ciashop_id {}'.format(product_database['erpId'],
+                                                                          product_api['id']))
+                    values_keys.update({product_database['erpId']: product_api['id']})
+
+        self._product_controller.update_products(values_keys)
 
 
 application = Application()

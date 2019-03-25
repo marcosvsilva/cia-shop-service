@@ -5,7 +5,7 @@ import datetime
 class Config:
 
     def __init__(self):
-        self.__config = json.loads(read_config_archive())
+        self.__config = json.loads(self.__read_config_archive())
 
         self.log_path = self.read_key_log_config('log_path')
         self.log_name = self.read_key_log_config('log_name')
@@ -17,11 +17,15 @@ class Config:
         self.database_uid = self.read_key_database_config('uid')
         self.database_pwd = self.read_key_database_config('pwd')
 
+        self.system_active = self.read_key_system_config('active') == 'yes'
         self.system_generate_log = self.read_key_system_config('generate_log') == 'yes'
-        self.system_print_url_request_log = self.read_key_system_config('print_url_request_log') == 'yes'
+        self.system_export_url_request_log = self.read_key_system_config('export_url_request_log') == 'yes'
+        self.system_export_update_sql_log = self.read_key_system_config('export_update_sql_log') == 'yes'
         self.system_export_requests_json = self.read_key_system_config('export_requests_json') == 'yes'
-
-        self.api_register_max_returns = self.read_key_api_config('register_max_returns')
+        self.system_sleep_timer_synchronize = self.__parse_int('sleep_timer_synchronize',
+                                                               self.read_key_system_config('sleep_timer_synchronize'))
+        self.system_register_max_returns = self.__parse_int('register_max_returns',
+                                                            self.read_key_system_config('register_max_returns'))
 
     def read_key_log_config(self, key_log):
         log_json = self.read_keys_config('log')
@@ -35,42 +39,45 @@ class Config:
         log_json = self.read_keys_config('system')
         return log_json[key_log]
 
-    def read_key_api_config(self, key_log):
-        log_json = self.read_keys_config('api')
-        return log_json[key_log]
-
     def read_keys_config(self, key):
         config_json = self.__config
         return config_json[key]
+
+    @staticmethod
+    def __read_config_archive():
+        config_name = "config.cfg"
+        with open(config_name) as file:
+            archive_config = file.read()
+
+        return archive_config
+
+    @staticmethod
+    def __parse_int(key_name, key):
+        try:
+            return int(key)
+        except ValueError:
+            generate_log('failure! the {} key and it must be an integer'.format(key_name))
 
 
 class Token:
 
     def __init__(self):
-        self.store_name = read_token_archive('store_name')
-        self.token = read_token_archive('token')
+        self.store_name = self.__read_token_archive('store_name')
+        self.token = self.__read_token_archive('token')
 
+    @staticmethod
+    def __read_token_archive(key):
+        result = None
+        token = "key.token"
+        with open(token, 'r') as token_read:
+            for line in token_read:
+                line = line.replace('\n', '')
+                line = line.split(':')
 
-def read_config_archive():
-    config_name = "config.cfg"
-    with open(config_name) as file:
-        archive_config = file.read()
+                if line[0] == key:
+                    result = line[1]
 
-    return archive_config
-
-
-def read_token_archive(key):
-    result = None
-    token = "key.token"
-    with open(token, 'r') as token_read:
-        for line in token_read:
-            line = line.replace('\n', '')
-            line = line.split(':')
-
-            if line[0] == key:
-                result = line[1]
-
-    return result
+        return result
 
 
 def generate_log(log):
@@ -83,10 +90,4 @@ def generate_log(log):
             log_file = '{}.{}'.format(config.log_name, config.log_extension)
 
         with open(log_file, 'a') as file:
-            file. writelines('{}: {}\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
-
-
-def get_table(table):
-    config = Config()
-    tables = config.read_keys_config('tables')
-    return tables[table]
+            file. writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))

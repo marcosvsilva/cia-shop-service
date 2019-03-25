@@ -1,8 +1,7 @@
 import json
-import time
 from _request import Request
 from _config import Config, Token, generate_log
-from _connection import Connection, get_file_sql
+from _connection import Connection
 
 
 class Controller:
@@ -19,7 +18,7 @@ class Controller:
             self._export_json('api_{}'.format(table), json_file)
             return json_file
         except Exception as fail:
-            generate_log('fail to api request, table: {}, fail: {}!'.format(table, fail))
+            generate_log('fail to api request, table: {}, fail: {}'.format(table, fail))
             return None
 
     def _get_database(self, sql_table, sql_query):
@@ -28,8 +27,14 @@ class Controller:
             self._export_json('database_{}'.format(sql_table), json_file)
             return json_file
         except Exception as fail:
-            generate_log('fail to database request, table: {}, fail: {}!'.format(sql_table, fail))
+            generate_log('fail to database request, table: {}, fail: {}'.format(sql_table, fail))
             return None
+
+    def _update_database(self, sql_table, sql_update):
+        try:
+            self.__connection.sql_update(sql_update)
+        except Exception as fail:
+            generate_log('fail to database update, table: {}, fail: {}'.format(sql_table, fail))
 
     def _export_json(self, archive_name, archive):
         try:
@@ -38,9 +43,16 @@ class Controller:
                     with open('{}.json'.format(archive_name), 'w') as file:
                         json.dump(archive, file)
                 else:
-                    generate_log('archive {} is empty!'.format(archive_name))
+                    generate_log('archive {} is empty'.format(archive_name))
         except Exception as fail:
-            generate_log('fail to export json request, archive: {}, fail: {}!'.format(archive_name, fail))
+            generate_log('fail to export json request, archive: {}, fail: {}'.format(archive_name, fail))
+
+    def _get_sql(self, file_sql):
+        try:
+            return self.__connection.get_file_sql(file_sql)
+        except Exception as fail:
+            generate_log('fail find sql file, fail: {}'.format(fail))
+            return None
 
 
 class ProductController(Controller):
@@ -54,29 +66,36 @@ class ProductController(Controller):
         json_api = self._get_api('products')
 
         if len(json_api) > 0:
-            json_api = sorted(json_api, key=lambda k: k['erpId'])
             return json_api
         else:
             return None
 
     def get_products_database(self):
         try:
-            products = self._get_database('products', get_file_sql('products.sql'))
-            filters_products = self._get_database('filter', get_file_sql('filters.sql'))
+            products = self._get_database('products', self._get_sql('get_products.sql'))
+            filters_products = self._get_database('filter', self._get_sql('get_filters.sql'))
 
             if (len(products) > 0) and (len(filters_products) > 0):
                 for product in products:
-                    for filter_product in filters_products:
-                        if filter_product['erpId'] > product['erpId']:
-                            break
-                        if filter_product['erpId'] == product['erpId']:
-                            self.__add_filter_product(product, filter_product)
+                    filters = filter(lambda x: x['erpId'] == product['erpId'], filters_products)
+                    for filter_product in filters:
+                        self.__add_filter_product(product, filter_product)
 
             self._export_json('database_products_final', products)
             return products
         except Exception as fail:
-            generate_log('fail to database request products, fail: {}!'.format(fail))
+            generate_log('fail to database request products, fail: {}'.format(fail))
             return None
+
+    def update_products(self, keys_values):
+        try:
+            for key, value in keys_values.items():
+                sql_update = self._get_sql('update_csi_id_products.sql')
+                sql_update = sql_update.replace('%KEY%', str("'"+key+"'"))
+                sql_update = sql_update.replace('%VALUE%', str(value))
+                self._update_database('products', sql_update)
+        except Exception as fail:
+            generate_log('fail to database update products, fail: {}'.format(fail))
 
     @staticmethod
     def __add_filter_product(product, filter_product):
@@ -87,6 +106,3 @@ class ProductController(Controller):
         list_filters.append({'name': filter_product['name'], 'values': [filter_product['values']]})
         product['filter'] = list_filters
         return product
-
-
-con = ProductController()

@@ -3,5 +3,3 @@ SELECT
     CSI_ID as 'id'
 FROM
     CSI_PRODUTO
-ORDER BY
-    PROD_ID

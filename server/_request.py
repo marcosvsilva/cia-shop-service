@@ -31,14 +31,14 @@ class Request:
                 url_request = '{}://{}/api/{}/{}'.format(self.protocol, self.store_name, self.version_api, table)
 
             config = Config()
-            if config.system_print_url_request_log:
+            if config.system_export_url_request_log:
                 generate_log('url api request: {}'.format(url_request))
 
             request = self.request.get(url_request)
             json_request = json.loads(request.text)
 
             if len(json_request) == config.system_register_max_returns:
-                json_request + self.get_list(table, json_request[config.system_register_max_returns - 1]['id'])
+                json_request = json_request + self.get_list(table, json_request[config.system_register_max_returns - 1]['id'])
 
             return json_request
         except Exception as fail:

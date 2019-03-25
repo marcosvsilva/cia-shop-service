@@ -21,6 +21,13 @@ class Controller:
             generate_log('fail to api request, table: {}, fail: {}'.format(table, fail))
             return None
 
+    def _update_api(self, table, products_update):
+        try:
+            return self.__request.put_list(table, products_update)
+        except Exception as fail:
+            generate_log('fail to api update, table: {}, fail: {}'.format(table, fail))
+            return None
+
     def _get_database(self, sql_table, sql_query):
         try:
             json_file = self.__connection.sql_query(sql_query)
@@ -70,6 +77,13 @@ class ProductController(Controller):
         else:
             return None
 
+    def update_products_api(self, products_update):
+        try:
+            return self._update_api('products', products_update)
+        except Exception as fail:
+            generate_log('fail to api update products, fail: {}'.format(fail))
+            return None
+
     def get_products_database(self):
         try:
             products = self._get_database('products', self._get_sql('get_products.sql'))
@@ -88,7 +102,7 @@ class ProductController(Controller):
             generate_log('fail to database request products, fail: {}'.format(fail))
             return None
 
-    def update_products(self, keys_values):
+    def update_products_database(self, keys_values):
         try:
             for key, value in keys_values.items():
                 sql_update = self._get_sql('update_csi_id_products.sql')

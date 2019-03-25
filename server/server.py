@@ -36,11 +36,8 @@ class Application:
             if action == actions[1]:
                 self.update_api_id_database()
 
-            '''
-            --- functionality under test ---
             if action == actions[2]:
                 self.update_api_brands()
-            '''
 
         except Exception as fail:
             generate_log('crash process {}, fail: {}'.format(action, fail))

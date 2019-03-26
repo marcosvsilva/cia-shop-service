@@ -11,14 +11,15 @@ class Connection:
 
         try:
             self.__connection = pyodbc.connect("Driver={SQL Server Native Client 11.0};" +
-                                               "Server={};".format(self.__config.database_server) +
-                                               "Database={};".format(self.__config.database) +
-                                               "Trusted_Connection={};".format(self.__config.
-                                                                               database_trusted_connection) +
-                                               "uid={};".format(self.__config.database_uid) +
-                                               "pwd={};".format(self.__config.database_pwd))
+                                               "Server={};".format(self.__config.get_key('server')) +
+                                               "Database={};".format(self.__config.get_key('database')) +
+                                               "Trusted_Connection={};".format(
+                                                   self.__config.get_key('trusted_connection')) +
+                                               "uid={};".format(self.__config.get_key('uid')) +
+                                               "pwd={};".format(self.__config.get_key('pwd')))
         except pyodbc.Error as fail:
             generate_log('exception connection, fail : {}'.format(fail))
+            self.__config.disable_service()
 
     def sql_query(self, sql_query):
         try:
@@ -31,7 +32,7 @@ class Connection:
 
     def sql_update(self, sql_update):
         try:
-            if self.__config.system_export_update_sql_log:
+            if self.__config.get_key('export_update_sql_log') == 'yes':
                 generate_log('update sql: {}'.format(sql_update))
 
             cursor = self.__connection.cursor()

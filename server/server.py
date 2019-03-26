@@ -11,20 +11,24 @@ actions = {
 class Application:
 
     def __init__(self):
-        self._product_controller = ProductController()
         self._config = Config()
-        self._products_api = None
-        self._products_database = None
+
+        if self._config.get_key('active') == 'yes':
+            self._product_controller = ProductController()
+            self._products_api = None
+            self._products_database = None
+        else:
+            generate_log('application not start because config active = "no"')
 
     def synchronize(self):
-        while self._config.system_active:
+        while self._config.get_key('active') == 'yes':
             try:
                 generate_log('start process synchronize')
                 self._products_api = self._product_controller.get_products_api()
                 self._products_database = self._product_controller.get_products_database()
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
-                time.sleep(self._config.system_sleep_timer_synchronize)
+                time.sleep(int(self._config.get_key('sleep_timer_synchronize')))
             except Exception as fail:
                 generate_log('crash synchronize, fail: {}'.format(fail))
                 break

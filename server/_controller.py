@@ -8,9 +8,9 @@ class Controller:
 
     def __init__(self):
         token = Token()
+        self.__config = Config()
         self.__request = Request(store_name=token.store_name, token=token.token)
         self.__connection = Connection()
-        self.__config = Config()
 
     def _get_api(self, table):
         try:
@@ -45,7 +45,7 @@ class Controller:
 
     def _export_json(self, archive_name, archive):
         try:
-            if self.__config.system_export_requests_json:
+            if self.__config.get_key('export_requests_json') == 'yes':
                 if len(archive) > 1:
                     with open('{}.json'.format(archive_name), 'w') as file:
                         json.dump(archive, file)
@@ -66,8 +66,6 @@ class ProductController(Controller):
 
     def __init__(self):
         super().__init__()
-        self.get_products_api()
-        self.get_products_database()
 
     def get_products_api(self):
         json_api = self._get_api('products')

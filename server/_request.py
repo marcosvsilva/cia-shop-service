@@ -1,7 +1,6 @@
 import requests
 import json
 from _config import Config, generate_log
-from _config import Token
 
 
 class Request:
@@ -24,6 +23,7 @@ class Request:
         self.__request.headers.update(content_type)
             
     def get_list(self, table, max_id=0):
+        config = Config()
         try:
             if max_id > 0:
                 url_request = '{}://{}/api/{}/{}/?minId={}'.format(self.__protocol, self.__store_name,
@@ -31,21 +31,21 @@ class Request:
             else:
                 url_request = '{}://{}/api/{}/{}'.format(self.__protocol, self.__store_name, self.__version_api, table)
 
-            config = Config()
-            if config.system_export_url_request_log:
+            if config.get_key('export_url_request_log') == 'yes':
                 generate_log('url api request: {}'.format(url_request))
 
             request = self.__request.get(url_request)
             request.encoding = 'utf-8'
             json_request = json.loads(request.text)
 
-            if len(json_request) == config.system_register_max_returns:
-                json_request = json_request + self.get_list(table,
-                                                            json_request[config.system_register_max_returns - 1]['id'])
+            max_register = int(config.get_key('register_max_returns'))
+            if len(json_request) == max_register:
+                json_request = json_request + self.get_list(table, json_request[max_register - 1]['id'])
 
             return json_request
         except Exception as fail:
             generate_log('exception api request, fail: {}'.format(fail))
+            config.disable_service()
             return None
 
     def put_list(self, table, products_update):

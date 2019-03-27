@@ -79,13 +79,13 @@ class Token:
                 if line[0] == key:
                     result = line[1]
 
-        return result
+        return result   
 
 
-def generate_log(log, list_fail=False):
+def generate_log(log, fail=False):
     config = Config()
 
-    if list_fail:
+    if fail:
         name_archive = config.get_key('log_fail')
     else:
         name_archive = config.get_key('log')

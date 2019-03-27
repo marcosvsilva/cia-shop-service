@@ -18,8 +18,8 @@ class Connection:
                                                "uid={};".format(self.__config.get_key('uid')) +
                                                "pwd={};".format(self.__config.get_key('pwd')))
         except pyodbc.Error as fail:
-            generate_log('exception connection, fail : {}'.format(fail))
             self.__config.disable_service()
+            raise Exception('exception connection, fail : {}'.format(fail))
 
     def sql_query(self, sql_query):
         try:
@@ -27,8 +27,7 @@ class Connection:
             json_file = json.loads(query.to_json(orient='records'))            
             return json_file
         except Exception as fail:
-            generate_log('exception get sql, fail: {}'.format(fail))
-            return None
+            raise Exception('exception get sql, fail: {}'.format(fail))
 
     def sql_update(self, sql_update):
         try:
@@ -39,7 +38,7 @@ class Connection:
             cursor.execute(sql_update)
             cursor.commit()
         except Exception as fail:
-            generate_log('exception update sql, fail: {}'.format(fail))
+            raise Exception('exception update sql, fail: {}'.format(fail), True)
 
     @staticmethod
     def get_file_sql(file_name):

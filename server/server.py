@@ -55,12 +55,10 @@ class Application:
             products_api = list(products_api)
 
             if len(products_api) == 0:
-                generate_log('product {} not found in ciashop'.format(product_database['erpId']))
+                generate_log('product {} not found in ciashop'.format(product_database['erpId']), fail=True)
 
             for product_api in products_api:
                 if product_database['id'] != product_api['id']:
-                    generate_log('update database: product {} ciashop_id {}'.format(product_database['erpId'],
-                                                                                    product_api['id']))
                     values_keys.update({product_database['erpId']: product_api['id']})
 
         self._product_controller.update_products_database(values_keys)
@@ -72,12 +70,10 @@ class Application:
             products_database = list(products_database)
 
             if len(products_database) == 0:
-                generate_log('product {} not found in database'.format(product_api['erpId']))
+                generate_log('product {} not found in database'.format(product_api['erpId']), fail=True)
 
             for product_database in products_database:
                 if product_api['brand'] != product_database['brand']:
-                    generate_log('update ciashop: product {} brand {}'.format(product_database['erpId'],
-                                                                              product_database['brand']['name']))
                     products_database_update.update({product_api['id']: {'brand': product_database['brand']}})
 
         self._product_controller.update_products_api(products_database_update)

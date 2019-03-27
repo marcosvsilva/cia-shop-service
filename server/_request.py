@@ -44,9 +44,8 @@ class Request:
 
             return json_request
         except Exception as fail:
-            generate_log('exception api request, fail: {}'.format(fail))
             config.disable_service()
-            return None
+            raise Exception('exception api request, fail: {}'.format(fail))
 
     def put_list(self, table, products_update):
         try:
@@ -58,11 +57,12 @@ class Request:
                 response_json = json.loads(response.content)
 
                 if response.status_code == 200:
-                    generate_log('update {} success! link {}'.format(table, response_json['url']))
+                    generate_log('update {}, key {}, success! link {}'.format(table, key, response_json['url']))
                 else:
-                    generate_log('update {} fail! fail: {}: {} - {}'.format(table, response.status_code,
-                                                                            response_json['message'],
-                                                                            response_json['errors'][0]['message']))
+                    generate_log('update {}, key {}, fail! fail: {}: {} - {}'.format(table,
+                                                                                     response.status_code,
+                                                                                     response_json['message'],
+                                                                                     response_json['errors'][0]['message'],
+                                                                                     key), fail=True)
         except Exception as fail:
-            generate_log('exception api post, fail: {}'.format(fail))
-            return None
+            raise Exception('exception api post, fail: {}'.format(fail))

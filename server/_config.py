@@ -82,12 +82,17 @@ class Token:
         return result
 
 
-def generate_log(log):
+def generate_log(log, list_fail=False):
     config = Config()
-    
+
+    if list_fail:
+        name_archive = config.get_key('log_fail')
+    else:
+        name_archive = config.get_key('log')
+
     if config.get_key('generate_log') == 'yes':
         if config.get_key('path') != '':
-            log_file = '{}\\{}.{}'.format(config.get_key('path'), config.get_key('log'), config.get_key('extension'))
+            log_file = '{}\\{}.{}'.format(config.get_key('path'), name_archive, config.get_key('extension'))
         else:
             log_file = '{}.{}'.format(config.get_key('log'), config.get_key('extension'))
 

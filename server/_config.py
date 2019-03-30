@@ -8,7 +8,7 @@ class Config:
         self.__class_system = ['active', 'generate_log', 'export_url_request_log', 'export_update_sql_log',
                                'export_requests_json', 'sleep_timer_synchronize', 'register_max_returns']
         self.__class_log = ['path', 'log', 'extension']
-        self.__class_database = ['server', 'database', 'trusted_connection', 'uid', 'pwd']
+        self.__class_database = ['server', 'port', 'database', 'trusted_connection', 'uid', 'pwd']
 
     def get_key(self, key):
         if key in self.__class_system:

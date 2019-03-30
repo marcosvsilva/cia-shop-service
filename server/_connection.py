@@ -1,4 +1,5 @@
-import pyodbc
+#import pyodbc
+import pymssql
 import pandas as pd
 import json
 from _config import Config, generate_log
@@ -10,13 +11,14 @@ class Connection:
         self.__config = Config()
 
         try:
-            self.__connection = pyodbc.connect("Driver={SQL Server Native Client 11.0};" +
-                                               "Server={};".format(self.__config.get_key('server')) +
-                                               "Database={};".format(self.__config.get_key('database')) +
-                                               "Trusted_Connection={};".format(
-                                                   self.__config.get_key('trusted_connection')) +
-                                               "uid={};".format(self.__config.get_key('uid')) +
-                                               "pwd={};".format(self.__config.get_key('pwd')))
+            server = self.__config.get_key('server')
+            port = self.__config.get_key('port')
+            database = self.__config.get_key('database')
+            user = self.__config.get_key('uid')
+            password = self.__config.get_key('pwd')
+
+            self.__connection = pymmsql.connect(server=server, port=port, database=database, user=user, password=password)
+
         except pyodbc.Error as fail:
             self.__config.disable_service()
             raise Exception('exception connection, fail : {}'.format(fail))
@@ -45,3 +47,5 @@ class Connection:
         with open('sqls/{}'.format(file_name)) as file:
             sql = file.read()
         return sql
+
+connection = Connection()

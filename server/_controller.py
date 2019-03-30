@@ -26,17 +26,17 @@ class Controller:
         except Exception as fail:
             raise Exception(fail)
 
-    def _get_database(self, sql_table, sql_query):
+    def _get_database(self, sql_table, sql_query, table_columns):
         try:
-            json_file = self.__connection.sql_query(sql_query)
+            json_file = self.__connection.sql_query(sql_query, table_columns)
             self._export_json('database_{}'.format(sql_table), json_file)
             return json_file
         except Exception as fail:
             raise Exception(fail)
 
-    def _update_database(self, sql_table, sql_update):
+    def _update_database(self, sql_update, list_update):
         try:
-            self.__connection.sql_update(sql_update)
+            self.__connection.sql_update(sql_update, list_update)
         except Exception as fail:
             raise Exception(fail)
 
@@ -79,8 +79,10 @@ class ProductController(Controller):
 
     def get_products_database(self):
         try:
-            products = self._get_database('products', self._get_sql('get_products.sql'))
-            filters_products = self._get_database('filter', self._get_sql('get_filters.sql'))
+            columns_products = ['erpId', 'name', 'brand']
+            columns_filters = ['erpId', 'name', 'values']
+            products = self._get_database('products', self._get_sql('get_products.sql'), columns_products)
+            filters_products = self._get_database('filter', self._get_sql('get_filters.sql'), columns_filters)
 
             if (len(products) > 0) and (len(filters_products) > 0):
                 for product in products:
@@ -98,10 +100,9 @@ class ProductController(Controller):
     def update_products_database(self, keys_values):
         for key, value in keys_values.items():
             try:
+                list_update = [(key, value)]
                 sql_update = self._get_sql('update_csi_id_products.sql')
-                sql_update = sql_update.replace('%KEY%', str("'"+key+"'"))
-                sql_update = sql_update.replace('%VALUE%', str(value))
-                self._update_database('products', sql_update)
+                self._update_database('products', sql_update, list_update)
                 generate_log('update database: product {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:
                 generate_log('fail to database update product {}, fail: {}'.format(key, fail), fail=True)

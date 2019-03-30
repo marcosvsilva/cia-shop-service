@@ -94,7 +94,7 @@ def generate_log(log, fail=False):
         if config.get_key('path') != '':
             log_file = '{}\\{}.{}'.format(config.get_key('path'), name_archive, config.get_key('extension'))
         else:
-            log_file = '{}.{}'.format(config.get_key('log'), config.get_key('extension'))
+            log_file = '{}.{}'.format(name_archive, config.get_key('extension'))
 
         with open(log_file, 'a') as file:
             file. writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))

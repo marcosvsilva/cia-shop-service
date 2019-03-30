@@ -8,78 +8,83 @@ class Config:
         self.__class_system = ['active', 'generate_log', 'export_url_request_log', 'export_update_sql_log',
                                'export_requests_json', 'sleep_timer_synchronize', 'register_max_returns']
         self.__class_log = ['path', 'log', 'log_fail', 'extension']
-        self.__class_database = ['server', 'port', 'database', 'trusted_connection', 'uid', 'pwd']
 
     def get_key(self, key):
         if key in self.__class_system:
             return self.__read_key_system_config(key)
 
-        elif key in self.__class_database:
-            return self.__read_key_database_config(key)
-
         elif key in self.__class_log:
             return self.__read_key_log_config(key)
 
         else:
-            generate_log('key {} not found')
-            self.disable_service()
-
-    def disable_service(self):
-        config_name = "config.cfg"
-        try:
-            archive_config = self.__read_config_archive()
-            archive_config['system']['active'] = 'no'
-
-            with open(config_name, 'w') as file:
-                file.write(json.dumps(archive_config))
-
-            generate_log('turn off service')
-        except Exception as fail:
-            generate_log('fail disable service, fail: {}'.format(fail))
+            generate_log('key {} not found in config')
+            disable_service()
 
     def __read_key_log_config(self, key_log):
         return self.__read_keys_config('log')[key_log]
 
     def __read_key_database_config(self, key_log):
         return self.__read_keys_config('database')[key_log]
-    
+
     def __read_key_system_config(self, key_log):
         return self.__read_keys_config('system')[key_log]
 
-    def __read_keys_config(self, key):
-        return self.__read_config_archive()[key]
-
     @staticmethod
-    def __read_config_archive():
-        config_name = "config.cfg"
-        try:
-            with open(config_name, 'r') as file:
-                archive_config = json.loads(file.read())
-
-            return archive_config
-        except Exception as fail:
-            generate_log('fail read config file, fail: {}'.format(fail))
+    def __read_keys_config(key):
+        return read_archive('config.cfg')[key]
 
 
 class Token:
 
     def __init__(self):
-        self.store_name = self.__read_token_archive('store_name')
-        self.token = self.__read_token_archive('token')
+        self.__class_token = ['store_name', 'token']
+        self.__class_database = ['server', 'port', 'database', 'trusted_connection', 'uid', 'pwd']
+
+    def get_key(self, key):
+        if key in self.__class_token:
+            return self.__read_token(key)
+
+        elif key in self.__class_database:
+            return self.__read_database(key)
+
+        else:
+            generate_log('key {} not found in token')
+            disable_service()
+
+    def __read_token(self, key):
+        return self.__read_token_file('key')[key]
+
+    def __read_database(self, key):
+        return self.__read_token_file('database')[key]
 
     @staticmethod
-    def __read_token_archive(key):
-        result = None
-        token = "key.token"
-        with open(token, 'r') as token_read:
-            for line in token_read:
-                line = line.replace('\n', '')
-                line = line.split(':')
+    def __read_token_file(key):
+        return read_archive('key.token')[key]
 
-                if line[0] == key:
-                    result = line[1]
 
-        return result   
+def read_archive(file_name):
+    try:
+        with open(file_name, 'r') as file:
+            archive_config = json.loads(file.read())
+
+        return archive_config
+    except Exception as fail:
+        generate_log('fail read config file {}, fail: {}'.format(file_name, fail))
+        return None
+
+
+def disable_service():
+    config_name = "config.cfg"
+    try:
+        archive_config = __read_archive('config.cfg')
+        archive_config['system']['active'] = 'no'
+
+        with open(config_name, 'w') as file:
+            file.write(json.dumps(archive_config))
+
+        generate_log('turn off service')
+    except Exception as fail:
+        generate_log('fail disable service, fail: {}'.format(fail))
 
 
 def generate_log(log, fail=False):
@@ -97,4 +102,4 @@ def generate_log(log, fail=False):
             log_file = '{}.{}'.format(name_archive, config.get_key('extension'))
 
         with open(log_file, 'a') as file:
-            file. writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
+            file.writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))

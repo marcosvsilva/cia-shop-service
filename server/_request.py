@@ -1,13 +1,14 @@
 import requests
 import json
-from _config import Config, generate_log
+from _config import Config, Token, disable_service, generate_log
 
 
 class Request:
 
-    def __init__(self, token, store_name):
-        self.__token = token
-        self.__store_name = store_name
+    def __init__(self):
+        token = Token()
+        self.__token = token.get_key('token')
+        self.__store_name = token.get_key('store_name')
 
         self.__request = requests.Session()
         self.__protocol = 'https'
@@ -44,7 +45,7 @@ class Request:
 
             return json_request
         except Exception as fail:
-            config.disable_service()
+            disable_service()
             raise Exception('exception api request, fail: {}'.format(fail))
 
     def put_list(self, table, products_update):

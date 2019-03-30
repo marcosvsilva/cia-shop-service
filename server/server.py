@@ -4,7 +4,8 @@ from _config import Config, generate_log
 
 actions = {
     1: 'update api id database',
-    2: 'update brands api'
+    2: 'update brands api',
+    3: 'update filters api'
 }
 
 
@@ -28,6 +29,7 @@ class Application:
                 self._products_database = self._product_controller.get_products_database()
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
+                self.execute_action(actions[3])
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
                 time.sleep(time_to_sleep)
@@ -42,8 +44,14 @@ class Application:
             if action == actions[1]:
                 self.update_api_id_database()
 
+            '''
+            CiaShop api fail from update brand
             if action == actions[2]:
                 self.update_api_brands()
+            '''
+
+            if action == actions[3]:
+                self.update_api_filters()
 
         except Exception as fail:
             generate_log('crash process {}, fail: {}'.format(action, fail))
@@ -77,6 +85,18 @@ class Application:
             for product_database in products_database:
                 if product_api['brand'] != product_database['brand']:
                     products_database_update.update({product_api['id']: {'brand': product_database['brand']}})
+
+        self._product_controller.update_products_api(products_database_update)
+
+    def update_api_filters(self):
+        products_database_update = {}
+        for product_api in self._products_api:
+            products_database = filter(lambda x: x['erpId'] == product_api['erpId'], self._products_database)
+            products_database = list(products_database)
+
+            for product_database in products_database:
+                if product_database['filter'] == product_api['filter']:
+                    products_database_update.update({product_api['id']: product_database['filter']})
 
         self._product_controller.update_products_api(products_database_update)
 

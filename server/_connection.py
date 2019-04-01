@@ -50,7 +50,6 @@ class Connection:
                 generate_log('update sql: {}'.format(sql_update))
 
             cursor = self.__connection.cursor()
-            #cursor.execute("BEGIN TRANSACTION")
             cursor.executemany(sql_update, list_update)
             self.__connection.commit()
         except Exception as fail:

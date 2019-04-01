@@ -41,8 +41,8 @@ class Application:
         generate_log('start process {}'.format(action))
 
         try:
-            if action == actions[1]:
-                self.update_api_id_database()
+            #if action == actions[1]:
+                #self.update_api_id_database()
 
             '''
             CiaShop api fail from update brand
@@ -95,8 +95,9 @@ class Application:
             products_database = list(products_database)
 
             for product_database in products_database:
-                if product_database['filter'] == product_api['filter']:
-                    products_database_update.update({product_api['id']: product_database['filter']})
+                if ('filters' in product_database) and ('filters' in product_api):
+                    if product_database['filters'] != product_api['filters']:
+                        products_database_update.update({product_api['id']: {'filters': product_database['filters']}})
 
         self._product_controller.update_products_api(products_database_update)
 

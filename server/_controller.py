@@ -110,11 +110,11 @@ class ProductController(Controller):
     @staticmethod
     def __add_filter_product(product, filter_product):
         list_filters = []
-        if 'filter' in product:
-            list_filters = product['filter']
+        if 'filters' in product:
+            list_filters = product['filters']
 
         list_filters.append({'name': filter_product['name'], 'values': [filter_product['values']]})
-        product['filter'] = list_filters
+        product['filters'] = list_filters
         return product
 
     @staticmethod

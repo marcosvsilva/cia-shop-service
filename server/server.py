@@ -41,8 +41,8 @@ class Application:
         generate_log('start process {}'.format(action))
 
         try:
-            #if action == actions[1]:
-                #self.update_api_id_database()
+            if action == actions[1]:
+                self.update_api_id_database()
 
             '''
             CiaShop api fail from update brand

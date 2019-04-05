@@ -5,7 +5,8 @@ from _config import Config, generate_log
 actions = {
     1: 'update api id database',
     2: 'update brands api',
-    3: 'update filters api'
+    3: 'update filters api',
+    4: 'update category'
 }
 
 
@@ -97,6 +98,9 @@ class Application:
                         products_database_update.update({product_api['id']: {'filters': product_database['filters']}})
 
         self._product_controller.update_products_api(products_database_update)
+
+    def update_category(self):
+        pass
 
 
 application = Application()

@@ -44,11 +44,8 @@ class Application:
             if action == actions[1]:
                 self.update_api_id_database()
 
-            '''
-            CiaShop api fail from update brand
             if action == actions[2]:
                 self.update_api_brands()
-            '''
 
             if action == actions[3]:
                 self.update_api_filters()

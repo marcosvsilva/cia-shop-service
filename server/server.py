@@ -99,12 +99,6 @@ class Application:
 
         self._product_controller.update_products_api(products_database_update)
 
-    def update_category(self):
-        products_database_update
-        for product_api in self._products_api
-            
-
-
 
 application = Application()
 application.synchronize()

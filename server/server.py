@@ -5,8 +5,7 @@ from _config import Config, generate_log
 actions = {
     1: 'update api id database',
     2: 'update brands api',
-    3: 'update filters api',
-    4: 'update category'
+    3: 'update filters api'
 }
 
 

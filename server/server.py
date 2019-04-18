@@ -29,7 +29,7 @@ class Application:
                 self._products_database = self._product_controller.get_products_database()
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
-                #self.execute_action(actions[3])
+                self.execute_action(actions[3])
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
                 time.sleep(time_to_sleep)

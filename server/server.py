@@ -98,6 +98,6 @@ class Application:
 
         self._product_controller.update_products_api(products_database_update)
 
-
 application = Application()
+application.synchronize()
 application.synchronize()

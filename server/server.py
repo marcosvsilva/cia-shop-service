@@ -36,7 +36,7 @@ class Application:
             except Exception as fail:
                 generate_log('crash synchronize, fail: {}'.format(fail))
                 break
-    
+
     def execute_action(self, action):
         generate_log('start process {}'.format(action))
 
@@ -52,9 +52,9 @@ class Application:
 
         except Exception as fail:
             generate_log('crash process {}, fail: {}'.format(action, fail))
-        
+
         generate_log('finishing process {}'.format(action))
-    
+
     def update_api_id_database(self):
         values_keys = {}
         for product_database in self._products_database:
@@ -99,5 +99,4 @@ class Application:
         self._product_controller.update_products_api(products_database_update)
 
 application = Application()
-application.synchronize()
 application.synchronize()

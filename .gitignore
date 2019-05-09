@@ -106,6 +106,7 @@ venv.bak/
 
 # PyCharm environment
 /.idea
+/.vscode
 
 # Keys and Tokens CiaShopAPI
 *.token

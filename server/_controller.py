@@ -79,7 +79,7 @@ class ProductController(Controller):
 
     def get_products_database(self):
         try:
-            columns_products = ['erpId', 'id', 'brand']
+            columns_products = ['erpId', 'id', 'mainDepartmentId', 'brand']
             columns_filters = ['erpId', 'name', 'values']
             products = self._get_database('products', self._get_sql('get_products.sql'), columns_products)
             filters_products = self._get_database('filter', self._get_sql('get_filters.sql'), columns_filters)
@@ -156,7 +156,7 @@ class DepartmentController(Controller):
         for key, value in keys_values.items():
             try:
                 list_update = [(value, key)]
-                sql_update = self._get_sql('update_csi_id_departament.sql')                
+                sql_update = self._get_sql('update_csi_id_departments.sql')                
                 self._update_database(sql_update, list_update)
                 generate_log('update database: departments {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:

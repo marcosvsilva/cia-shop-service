@@ -1,11 +1,13 @@
 import time
-from _controller import ProductController
+from _controller import ProductController, DepartmentController
 from _config import Config, generate_log
 
 actions = {
-    1: 'update api id database',
-    2: 'update brands api',
-    3: 'update filters api'
+    1: 'update database api id products',
+    2: 'update database api id departments',
+    3: 'update database department id products', 
+    4: 'update api brands',
+    5: 'update api filters'
 }
 
 
@@ -18,6 +20,10 @@ class Application:
             self._product_controller = ProductController()
             self._products_api = None
             self._products_database = None
+            
+            self._departments_controller = DepartmentController()
+            self._departments_api = None
+            self._departments_database = None
         else:
             generate_log('application not start because config active = "no"')
 
@@ -27,9 +33,15 @@ class Application:
                 generate_log('start process synchronize')
                 self._products_api = self._product_controller.get_products_api()
                 self._products_database = self._product_controller.get_products_database()
+
+                self._departments_api = self._departments_controller.get_departments_api()
+                self._departments_database = self._departments_controller.get_departments_database()
+
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
                 self.execute_action(actions[3])
+                self.execute_action(actions[4])
+
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
                 time.sleep(time_to_sleep)
@@ -42,12 +54,18 @@ class Application:
 
         try:
             if action == actions[1]:
-                self.update_api_id_database()
-
+                self.update_database_api_id_products()
+            
             if action == actions[2]:
-                self.update_api_brands()
+                self.update_database_api_id_departments()
 
             if action == actions[3]:
+                self.update_database_departament_id_products()
+
+            if action == actions[4]:
+                self.update_api_brands()
+
+            if action == actions[5]:
                 self.update_api_filters()
 
         except Exception as fail:
@@ -55,20 +73,40 @@ class Application:
 
         generate_log('finishing process {}'.format(action))
 
-    def update_api_id_database(self):
+    def update_database_api_id_products(self):
         values_keys = {}
         for product_database in self._products_database:
-            products_api = filter(lambda x: x['erpId'] == product_database['erpId'], self._products_api)
-            products_api = list(products_api)
+            if product_database['id'] < 0:
+                products_api = filter(lambda x: x['erpId'] == product_database['erpId'], self._products_api)
+                products_api = list(products_api)
 
-            if len(products_api) == 0:
-                generate_log('product {} not found in ciashop'.format(product_database['erpId']), fail=True)
+                if len(products_api) == 0:
+                    generate_log('product {} not found in ciashop'.format(product_database['erpId']), fail=True)
 
-            for product_api in products_api:
-                if product_database['id'] != product_api['id']:
-                    values_keys.update({product_database['erpId']: product_api['id']})
+                for product_api in products_api:
+                    if product_database['id'] != product_api['id']:
+                        values_keys.update({product_database['erpId']: product_api['id']})
 
         self._product_controller.update_products_database(values_keys)
+
+    def update_database_api_id_departments(self):
+        values_keys = {}
+        for departments_database in self._departments_database:
+            if departments_database['id'] < 0:
+                departments_api = filter(lambda x: x['erpId'] == departments_database['erpId'], self._departments_api)
+                departments_api = list(departments_api)
+
+                if len(departments_api) == 0:
+                    generate_log('department {} not found in ciashop'.format(departments_database['erpId']), fail=True)
+
+                for department_api in departments_api:
+                    if departments_database['id'] != department_api['id']:
+                        values_keys.update({departments_database['erpId']: department_api['id']})
+
+        self._departments_controller.update_departments_database(values_keys)
+
+    def update_database_departament_id_products(self):
+        print('ok')
 
     def update_api_brands(self):
         products_database_update = {}

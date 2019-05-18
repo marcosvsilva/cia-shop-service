@@ -1,6 +1,7 @@
 SELECT
     CPRD.PROD_CODIGO as 'erpId',
-    CPRD.CSI_ID as 'id',
+    ISNULL(CPRD.CSI_ID, -1) as 'id',
+	ISNULL(CPRD.CATEGORIA_CSI_ID, -1) as 'mainDepartmentId',
 	MARC.MARC_NOME as 'brand'
 FROM
     CSI_PRODUTO CPRD

@@ -158,7 +158,7 @@ class DepartmentController(Controller):
                 list_update = [(value, key)]
                 sql_update = self._get_sql('update_csi_id_departments.sql')                
                 self._update_database(sql_update, list_update)
-                generate_log('update database: departments {} ciashop_id {}'.format(key, str(value)))
+                generate_log('update database: departments {} ciashop_id {}'.format(str(key), str(value)))
             except Exception as fail:
                 generate_log('fail to database update departments {}, fail: {}'.format(key, fail), fail=True)
 

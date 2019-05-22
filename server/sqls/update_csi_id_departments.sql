@@ -2,5 +2,5 @@ UPDATE
    CSI_CATEGORIA
 SET
    CSI_ID = %d
-FROM
-   CODIGO = %s
+WHERE
+   CODIGO = %d

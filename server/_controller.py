@@ -38,6 +38,12 @@ class Controller:
         except Exception as fail:
             raise Exception(fail)
 
+    def _update_database_with_script(self, sql_update):
+        try:
+            self.__connection.sql_execute(sql_update)
+        except Exception as fail:
+            raise Exception(fail)
+
     def _get_sql(self, file_sql):
         try:
             return self.__connection.get_file_sql(file_sql)
@@ -106,6 +112,13 @@ class ProductController(Controller):
                 generate_log('update database: product {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:
                 generate_log('fail to database update product {}, fail: {}'.format(key, fail), fail=True)
+    
+    def update_department_id(self):
+        try:
+            sql_script = self._get_sql('script_update_deparment_products.sql')
+            self._update_database_with_script(sql_script)
+        except Exception as fail:
+            generate_log('fail to execute script update deparment products, fail: {}'.format(fail), fail=True)
 
     @staticmethod
     def __add_filter_product(product, filter_product):

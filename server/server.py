@@ -5,9 +5,10 @@ from _config import Config, generate_log
 actions = {
     1: 'update database api id products',
     2: 'update database api id departments',
-    3: 'update database department id products', 
-    4: 'update api brands',
-    5: 'update api filters'
+    3: 'update database products departments', 
+    4: 'update api departments products',
+    5: 'update api brands',
+    6: 'update api filters'
 }
 
 
@@ -40,8 +41,13 @@ class Application:
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
                 self.execute_action(actions[3])
+
+                # Finishing process update products database, necessary reload products
+                self._products_database = self._product_controller.get_products_database()
+                
                 self.execute_action(actions[4])
                 self.execute_action(actions[5])
+                self.execute_action(actions[6])
 
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
@@ -61,8 +67,11 @@ class Application:
                 self.update_database_api_id_departments()
                 
             if action == actions[3]:
-                self.update_database_departament_id_products()
+                self.update_database_products_departments()
 
+            if action == actions[4]:
+                self.update_api_departments_products()            
+            
             if action == actions[5]:
                 self.update_api_brands()
 
@@ -106,11 +115,27 @@ class Application:
 
         self._departments_controller.update_departments_database(values_keys)
 
-    def update_database_departament_id_products(self):
-        self._product_controller.update_department_id
+    def update_database_products_departments(self):
+        self._product_controller.update_department_id()
+
+    def update_api_departments_products(self):
+        products_department_update = {}
+        for product_api in self._products_api:
+            products_database = filter(lambda x: x['erpId'] == product_api['erpId'], self._products_database)
+            products_database = list(products_database)
+
+            if len(products_database) == 0:
+                generate_log('product {} not found in database'.format(product_api['erpId']), fail=True)
+
+            for product_database in products_database:
+                if product_api['mainDepartmentId'] != product_database['mainDepartmentId']:
+                    products_department_update.update({product_api['id']:
+                        {'mainDepartmentId': product_database['mainDepartmentId']}})
+
+        self._product_controller.update_products_api(products_department_update)
 
     def update_api_brands(self):
-        products_database_update = {}
+        products_brands_update = {}
         for product_api in self._products_api:
             products_database = filter(lambda x: x['erpId'] == product_api['erpId'], self._products_database)
             products_database = list(products_database)
@@ -120,12 +145,12 @@ class Application:
 
             for product_database in products_database:
                 if product_api['brand'] != product_database['brand']:
-                    products_database_update.update({product_api['id']: {'brand': product_database['brand']}})
+                    products_brands_update.update({product_api['id']: {'brand': product_database['brand']}})
 
-        self._product_controller.update_products_api(products_database_update)
+        self._product_controller.update_products_api(products_brands_update)
 
     def update_api_filters(self):
-        products_database_update = {}
+        products_filters_update = {}
         for product_api in self._products_api:
             products_database = filter(lambda x: x['erpId'] == product_api['erpId'], self._products_database)
             products_database = list(products_database)
@@ -133,9 +158,9 @@ class Application:
             for product_database in products_database:
                 if ('filters' in product_database) and ('filters' in product_api):
                     if product_database['filters'] != product_api['filters']:
-                        products_database_update.update({product_api['id']: {'filters': product_database['filters']}})
+                        products_filters_update.update({product_api['id']: {'filters': product_database['filters']}})
 
-        self._product_controller.update_products_api(products_database_update)
+        self._product_controller.update_products_api(products_filters_update)
 
 application = Application()
 application.synchronize()

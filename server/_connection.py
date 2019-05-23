@@ -55,6 +55,20 @@ class Connection:
         except Exception as fail:
             self.__connection.rollback()
             raise Exception('exception update sql {}, fail: {}'.format(sql_update, fail), True)
+    
+    def sql_execute(self, sql_script):
+        try:
+            config = Config()
+            if config.get_key('export_update_sql_log') == 'yes':
+                generate_log('update sql: {}'.format(sql_script))
+
+            cursor = self.__connection.cursor()
+            cursor.execute(sql_script)
+            self.__connection.commit()
+        except Exception as fail:
+            self.__connection.rollback()
+            raise Exception('exception update sql {}, fail: {}'.format(sql_script, fail), True)
+
 
     @staticmethod
     def get_file_sql(file_name):

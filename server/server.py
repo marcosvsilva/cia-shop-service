@@ -41,6 +41,7 @@ class Application:
                 self.execute_action(actions[2])
                 self.execute_action(actions[3])
                 self.execute_action(actions[4])
+                self.execute_action(actions[5])
 
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
@@ -58,14 +59,14 @@ class Application:
             
             if action == actions[2]:
                 self.update_database_api_id_departments()
-
+                
             if action == actions[3]:
                 self.update_database_departament_id_products()
 
-            if action == actions[4]:
+            if action == actions[5]:
                 self.update_api_brands()
 
-            if action == actions[5]:
+            if action == actions[6]:
                 self.update_api_filters()
 
         except Exception as fail:
@@ -106,7 +107,7 @@ class Application:
         self._departments_controller.update_departments_database(values_keys)
 
     def update_database_departament_id_products(self):
-        print('ok')
+        self._product_controller.update_department_id
 
     def update_api_brands(self):
         products_database_update = {}

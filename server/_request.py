@@ -61,9 +61,10 @@ class Request:
                     generate_log('update {}, key {}, success! link {}'.format(table, key, response_json['url']))
                 else:
                     generate_log('update {}, key {}, fail! fail: {}: {} - {}'.format(table,
+                                                                                     key,
                                                                                      response.status_code,
                                                                                      response_json['message'],
-                                                                                     response_json['errors'][0]['message'],
-                                                                                     key), fail=True)
+                                                                                     response_json['errors'][0]
+                                                                                     ['message']), fail=True)
         except Exception as fail:
             raise Exception('exception api post, fail: {}'.format(fail))

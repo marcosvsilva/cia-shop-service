@@ -1,4 +1,5 @@
 import time
+import json
 from _controller import ProductController, DepartmentController
 from _config import Config, generate_log
 
@@ -142,10 +143,19 @@ class Application:
 
             if len(products_database) == 0:
                 generate_log('product {} not found in database'.format(product_api['erpId']), fail=True)
-
+            
             for product_database in products_database:
-                if product_api['brand'] != product_database['brand']:
-                    products_brands_update.update({product_api['id']: {'brand': product_database['brand']}})
+                if 'brand' in product_database:
+                    list_update = {}
+                    brand = product_database['brand']['name']
+                    if product_api['brand']['name'] != brand:
+                        list_update.update({'brand': product_database['brand']})
+                    
+                    if product_api['marketplaceManufacturerName'] != brand:
+                        list_update.update({'marketplaceDescription': product_api['name']})
+                        list_update.update({'marketplaceManufacturerName': brand})
+
+                    products_brands_update.update({product_api['id']: list_update})
 
         self._product_controller.update_products_api(products_brands_update)
 
@@ -157,7 +167,14 @@ class Application:
 
             for product_database in products_database:
                 if ('filters' in product_database) and ('filters' in product_api):
-                    if product_database['filters'] != product_api['filters']:
+                    
+                    hash_filters_database = str(product_database['filters'])
+                    hash_filters_api = str(product_api['filters'])
+                    
+                    hash_filters_database = sorted(hash_filters_database.upper())
+                    hash_filters_api = sorted(hash_filters_api.upper())
+
+                    if hash_filters_database != hash_filters_api:
                         products_filters_update.update({product_api['id']: {'filters': product_database['filters']}})
 
         self._product_controller.update_products_api(products_filters_update)

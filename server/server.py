@@ -148,8 +148,10 @@ class Application:
                 if 'brand' in product_database:
                     list_update = {}
                     brand = product_database['brand']['name']
-                    if product_api['brand']['name'] != brand:
-                        list_update.update({'brand': product_database['brand']})
+                    
+                    # api ciashop fail to update products brand
+                    # if product_api['brand']['name'] != brand:
+                        # list_update.update({'brand': product_database['brand']})
                     
                     if product_api['marketplaceManufacturerName'] != brand:
                         list_update.update({'marketplaceDescription': product_api['name']})

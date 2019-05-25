@@ -1,20 +1,14 @@
-from server import Application
-import socket
-import time
 import win32serviceutil
-import servicemanager
-import win32event
 import win32service
+import win32event
+import servicemanager
+import socket
+from server import Application
 
 
-class WinService(win32serviceutil.ServiceFramework):
-    _svc_name_ = 'Service'
-    _svc_display_name_ = 'Service Display'
-    _svc_description_ = 'Service Description'
-
-    @classmethod
-    def parse_command_line(cls):
-        win32serviceutil.HandleCommandLine(cls)
+class AppServerSvc(win32serviceutil.ServiceFramework):
+    _svc_name_ = "CSAPIServer"
+    _svc_display_name_ = "Jave Service CiaShop API Integration"
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
@@ -22,44 +16,20 @@ class WinService(win32serviceutil.ServiceFramework):
         socket.setdefaulttimeout(60)
 
     def SvcStop(self):
-        self.stop()
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.hWaitStop)
 
     def SvcDoRun(self):
-        self.start()
         servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,
                               servicemanager.PYS_SERVICE_STARTED,
                               (self._svc_name_, ''))
         self.main()
 
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    def main(self):
-        pass
-
-
-class Service(WinService):
-    _svc_name_ = 'CiaShopServer'
-    _svc_display_name_ = 'CiaShop Consumer Api'
-    _svc_description_ = 'Service to communicate with the API provided by the CiaShop platform to integrate ERP.'
-
-    def start(self):
-        self.isrunning = True
-
-    def stop(self):
-        self.isrunning = False
-
     def main(self):
         application = Application()
-        while self.isrunning:
+        while rc != win32event.WAIT_OBJECT_0:
             application.synchronize()
-            time.sleep(15)
 
 
-if __name__ == '__main__':    
-	Service.parse_command_line()
+if __name__ == '__main__':
+    win32serviceutil.HandleCommandLine(AppServerSvc)

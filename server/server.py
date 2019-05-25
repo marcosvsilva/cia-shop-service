@@ -1,12 +1,11 @@
 import time
-import json
 from _controller import ProductController, DepartmentController
 from _config import Config, generate_log
 
 actions = {
     1: 'update database api id products',
     2: 'update database api id departments',
-    3: 'update database products departments', 
+    3: 'update database products departments',
     4: 'update api departments products',
     5: 'update api brands',
     6: 'update api filters'
@@ -22,7 +21,7 @@ class Application:
             self._product_controller = ProductController()
             self._products_api = None
             self._products_database = None
-            
+
             self._departments_controller = DepartmentController()
             self._departments_api = None
             self._departments_database = None
@@ -45,7 +44,7 @@ class Application:
 
                 # Finishing process update products database, necessary reload products
                 self._products_database = self._product_controller.get_products_database()
-                
+
                 self.execute_action(actions[4])
                 self.execute_action(actions[5])
                 self.execute_action(actions[6])
@@ -63,16 +62,16 @@ class Application:
         try:
             if action == actions[1]:
                 self.update_database_api_id_products()
-            
+
             if action == actions[2]:
                 self.update_database_api_id_departments()
-                
+
             if action == actions[3]:
                 self.update_database_products_departments()
 
             if action == actions[4]:
-                self.update_api_departments_products()            
-            
+                self.update_api_departments_products()
+
             if action == actions[5]:
                 self.update_api_brands()
 
@@ -131,7 +130,7 @@ class Application:
             for product_database in products_database:
                 if product_api['mainDepartmentId'] != product_database['mainDepartmentId']:
                     products_department_update.update({product_api['id']:
-                        {'mainDepartmentId': product_database['mainDepartmentId']}})
+                                                           {'mainDepartmentId': product_database['mainDepartmentId']}})
 
         self._product_controller.update_products_api(products_department_update)
 
@@ -143,17 +142,17 @@ class Application:
 
             if len(products_database) == 0:
                 generate_log('product {} not found in database'.format(product_api['erpId']), fail=True)
-            
+
             for product_database in products_database:
                 if 'brand' in product_database:
                     list_update = {}
                     brand = product_database['brand']['name']
-                    
+
                     # api ciashop fail to update products brand
                     # if product_api['brand']['name'] != brand:
                         # list_update.update({'brand': product_database['brand']})
-                    
-                    if product_api['marketplaceManufacturerName'] != brand:
+
+                    if product_api['marketplaceManufactur erName'] != brand:
                         list_update.update({'marketplaceDescription': product_api['name']})
                         list_update.update({'marketplaceManufacturerName': brand})
 
@@ -169,10 +168,10 @@ class Application:
 
             for product_database in products_database:
                 if ('filters' in product_database) and ('filters' in product_api):
-                    
+
                     hash_filters_database = str(product_database['filters'])
                     hash_filters_api = str(product_api['filters'])
-                    
+
                     hash_filters_database = sorted(hash_filters_database.upper())
                     hash_filters_api = sorted(hash_filters_api.upper())
 
@@ -180,6 +179,3 @@ class Application:
                         products_filters_update.update({product_api['id']: {'filters': product_database['filters']}})
 
         self._product_controller.update_products_api(products_filters_update)
-
-application = Application()
-application.synchronize()

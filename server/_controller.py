@@ -137,6 +137,7 @@ class ProductController(Controller):
         return product
 
 class DepartmentController(Controller):
+    
     def __init__(self):
         super().__init__()
 

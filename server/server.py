@@ -29,7 +29,7 @@ class Application:
             generate_log('application not start because config active = "no"')
 
     def synchronize(self):
-        while self._config.get_key('active') == 'yes':
+        if self._config.get_key('active') == 'yes':
             try:
                 generate_log('start process synchronize')
                 self._products_api = self._product_controller.get_products_api()
@@ -54,7 +54,6 @@ class Application:
                 time.sleep(time_to_sleep)
             except Exception as fail:
                 generate_log('crash synchronize, fail: {}'.format(fail))
-                break
 
     def execute_action(self, action):
         generate_log('start process {}'.format(action))

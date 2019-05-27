@@ -64,7 +64,8 @@ class Token:
 
 def read_archive(file_name):
     try:
-        with open(file_name, 'r') as file:
+        file_read = 'C:\\Jave\\CSAPIService\\{}'.format(file_name)
+        with open(file_read, 'r') as file:
             archive_config = json.loads(file.read())
 
         return archive_config
@@ -74,7 +75,8 @@ def read_archive(file_name):
 
 
 def disable_service():
-    config_name = "config.cfg"
+    config_name = 'C:\\Jave\\CSAPIService\\{}'.format("config.cfg")
+        
     try:
         archive_config = __read_archive('config.cfg')
         archive_config['system']['active'] = 'no'
@@ -96,10 +98,7 @@ def generate_log(log, fail=False):
         name_archive = config.get_key('log')
 
     if config.get_key('generate_log') == 'yes':
-        if config.get_key('path') != '':
-            log_file = '{}\\{}.{}'.format(config.get_key('path'), name_archive, config.get_key('extension'))
-        else:
-            log_file = '{}.{}'.format(name_archive, config.get_key('extension'))
+        log_file = 'C:\\Jave\\CSAPIService\\{}.{}'.format(name_archive, config.get_key('extension'))
 
         with open(log_file, 'a') as file:
             file.writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))

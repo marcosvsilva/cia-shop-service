@@ -72,6 +72,6 @@ class Connection:
 
     @staticmethod
     def get_file_sql(file_name):
-        with open('sqls/{}'.format(file_name)) as file:
+        with open('C:\\Jave\\CSAPIService\\sqls\\{}'.format(file_name)) as file:
             sql = file.read()
         return sql

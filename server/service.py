@@ -28,7 +28,7 @@ class CSAPIServer(win32serviceutil.ServiceFramework):
         config = Config()
         application = Application()
         while rc != win32event.WAIT_OBJECT_0:
-            time_to_sleep = int(config.get_key('sleep_timer_synchronize'))            
+            time_to_sleep = int(config.get_key('sleep_timer_synchronize')) * 1000
             application.synchronize()
 
             rc = win32event.WaitForSingleObject(self.hWaitStop, time_to_sleep)

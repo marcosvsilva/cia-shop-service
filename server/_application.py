@@ -1,4 +1,3 @@
-import time
 from _controller import ProductController, DepartmentController
 from _config import Config, generate_log
 
@@ -50,8 +49,7 @@ class Application:
                 self.execute_action(actions[6])
 
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
-                generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
-                time.sleep(time_to_sleep)
+                generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))                
             except Exception as fail:
                 generate_log('crash synchronize, fail: {}'.format(fail))
 

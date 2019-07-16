@@ -1,6 +1,6 @@
 import requests
 import json
-from _config import Config, Token, disable_service, generate_log
+from _config import Config, Token, generate_log
 
 
 class Request:
@@ -45,7 +45,6 @@ class Request:
 
             return json_request
         except Exception as fail:
-            disable_service()
             raise Exception('exception api request, fail: {}'.format(fail))
 
     def put_list(self, table, products_update):
@@ -60,11 +59,11 @@ class Request:
                 if response.status_code == 200:
                     generate_log('update {}, key {}, success! link {}'.format(table, key, response_json['url']))
                 else:
-                    generate_log('update {}, key {}, fail! fail: {}: {} - {}'.format(table,
+                    raise Exception('update {}, key {}, fail! fail: {}: {} - {}'.format(table,
                                                                                      key,
                                                                                      response.status_code,
                                                                                      response_json['message'],
                                                                                      response_json['errors'][0]
-                                                                                     ['message']), fail=True)
+                                                                                     ['message']))
         except Exception as fail:
             raise Exception('exception api post, fail: {}'.format(fail))

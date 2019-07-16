@@ -12,9 +12,7 @@ class Controller:
 
     def _get_api(self, table):
         try:
-            json_file = self.__request.get_list(table)
-            self._export_json('api_{}'.format(table), json_file)
-            return json_file
+            return self.__request.get_list(table)
         except Exception as fail:
             raise Exception(fail)
 
@@ -59,7 +57,7 @@ class Controller:
                     with open('{}.json'.format(archive_name), 'w') as file:
                         json.dump(archive, file)
                 else:
-                    generate_log('archive {} is empty'.format(archive_name))
+                    raise Exception('archive {} is empty'.format(archive_name))
         except Exception as fail:
             raise Exception('fail to export json request, archive: {}, fail: {}'.format(archive_name, fail))
 
@@ -73,15 +71,13 @@ class ProductController(Controller):
         try:
             return self._get_api('products')    
         except Exception as fail:
-            generate_log('fail get products to api, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail get products to api, fail: {}'.format(fail))
 
     def update_products_api(self, products_update):
         try:
             return self._update_api('products', products_update)
         except Exception as fail:
-            generate_log('fail update products to api, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail update products to api, fail: {}'.format(fail))
 
     def get_products_database(self):
         try:
@@ -100,8 +96,7 @@ class ProductController(Controller):
             self._export_json('database_products_final', products)
             return products
         except Exception as fail:
-            generate_log('fail to database request products, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail to database request products, fail: {}'.format(fail))
 
     def update_products_database(self, keys_values):
         for key, value in keys_values.items():
@@ -111,14 +106,14 @@ class ProductController(Controller):
                 self._update_database(sql_update, list_update)
                 generate_log('update database: product {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:
-                generate_log('fail to database update product {}, fail: {}'.format(key, fail), fail=True)
+                raise Exception('fail to database update product {}, fail: {}'.format(key, fail))
     
     def update_department_id(self):
         try:
             sql_script = self._get_sql('script_update_deparment_products.sql')
             self._update_database_with_script(sql_script)
         except Exception as fail:
-            generate_log('fail to execute script update deparment products, fail: {}'.format(fail), fail=True)
+            raise Exception('fail to execute script update deparment products, fail: {}'.format(fail))
 
     @staticmethod
     def __add_filter_product(product, filter_product):
@@ -136,6 +131,7 @@ class ProductController(Controller):
         product['brand'] = {'name': brand_value}
         return product
 
+
 class DepartmentController(Controller):
     
     def __init__(self):
@@ -145,15 +141,13 @@ class DepartmentController(Controller):
         try:
             return self._get_api('departments')    
         except Exception as fail:
-            generate_log('fail get departments to api, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail get departments to api, fail: {}'.format(fail))
 
     def update_departments_api(self, departments_update):
         try:
             return self._update_api('departments', departments_update)
         except Exception as fail:
-            generate_log('fail update departments to api, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail update departments to api, fail: {}'.format(fail))
 
     def get_departments_database(self):
         try:
@@ -163,8 +157,7 @@ class DepartmentController(Controller):
             self._export_json('database_departments', departments)
             return departments
         except Exception as fail:
-            generate_log('fail to database request departments, fail: {}'.format(fail), fail=True)
-            return None
+            raise Exception('fail to database request departments, fail: {}'.format(fail))
 
     def update_departments_database(self, keys_values):
         for key, value in keys_values.items():
@@ -174,7 +167,7 @@ class DepartmentController(Controller):
                 self._update_database(sql_update, list_update)
                 generate_log('update database: departments {} ciashop_id {}'.format(str(key), str(value)))
             except Exception as fail:
-                generate_log('fail to database update departments {}, fail: {}'.format(key, fail), fail=True)
+                raise Exception('fail to database update departments {}, fail: {}'.format(key, fail))
 
     def update_departments_products_database(self, keys_values):
         for key, value in keys_values.items():
@@ -184,4 +177,4 @@ class DepartmentController(Controller):
                 self._update_database(sql_update, list_update)
                 generate_log('update database: departments {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:
-                generate_log('fail to database update departments {}, fail: {}'.format(key, fail), fail=True)
+                raise Exception('fail to database update departments {}, fail: {}'.format(key, fail))

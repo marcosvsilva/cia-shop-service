@@ -1,5 +1,6 @@
 import json
 import datetime
+from pathlib import Path
 
 
 class Config:
@@ -17,8 +18,7 @@ class Config:
             return self.__read_key_log_config(key)
 
         else:
-            generate_log('key {} not found in config')
-            disable_service()
+            raise Exception('key {} not found in config')
 
     def __read_key_log_config(self, key_log):
         return self.__read_keys_config('log')[key_log]
@@ -48,8 +48,7 @@ class Token:
             return self.__read_database(key)
 
         else:
-            generate_log('key {} not found in token')
-            disable_service()
+            raise Exception('key {} not found in token')
 
     def __read_token(self, key):
         return self.__read_token_file('key')[key]
@@ -63,30 +62,17 @@ class Token:
 
 
 def read_archive(file_name):
-    try:
-        file_read = 'C:\\Jave\\CSAPIService\\{}'.format(file_name)
-        with open(file_read, 'r') as file:
-            archive_config = json.loads(file.read())
+    path = Path(file_name)
+    if path.is_file():
+        try:
+            with open(file_name, 'r') as file:
+                archive_config = json.loads(file.read())
 
-        return archive_config
-    except Exception as fail:
-        generate_log('fail read config file {}, fail: {}'.format(file_name, fail))
-        return None
-
-
-def disable_service():
-    config_name = 'C:\\Jave\\CSAPIService\\{}'.format("config.cfg")
-        
-    try:
-        archive_config = __read_archive('config.cfg')
-        archive_config['system']['active'] = 'no'
-
-        with open(config_name, 'w') as file:
-            file.write(json.dumps(archive_config))
-
-        generate_log('turn off service')
-    except Exception as fail:
-        generate_log('fail disable service, fail: {}'.format(fail))
+            return archive_config
+        except Exception as fail:
+            raise Exception('fail read config file {}, fail: {}'.format(file_name, fail))
+    else:
+        raise Exception('fail! No exists {} in directory'.format(file_name))
 
 
 def generate_log(log, fail=False):
@@ -98,7 +84,24 @@ def generate_log(log, fail=False):
         name_archive = config.get_key('log')
 
     if config.get_key('generate_log') == 'yes':
-        log_file = 'C:\\Jave\\CSAPIService\\{}.{}'.format(name_archive, config.get_key('extension'))
+        log_file = '{}.{}'.format(name_archive, config.get_key('extension'))
 
         with open(log_file, 'a') as file:
             file.writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
+
+
+def get_list_exclude():
+    file_read = Path('exclude.lst')
+    if file_read.is_file():
+        try:
+            exclude = []
+            with open(file_read, 'r') as file:
+                for line in file.readlines():
+                    line = line.replace('\n', '')
+                    exclude.append(line)
+
+            return exclude
+        except Exception as fail:
+            raise Exception('fail read exclude files {}, fail: {}'.format(file_read, fail))
+    else:
+        return []

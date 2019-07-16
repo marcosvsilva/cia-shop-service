@@ -1,5 +1,5 @@
 import pymssql
-from _config import Config, Token, disable_service, generate_log
+from _config import Config, Token, generate_log
 
 
 class Connection:
@@ -21,7 +21,6 @@ class Connection:
                 self.__connection = pymssql.connect(server=server, database=database, user=user, password=password)
 
         except pymssql.Error as fail:
-            disable_service()
             raise Exception('exception connection, fail : {}'.format(fail))
 
     def sql_query(self, sql_query, table_columns):
@@ -69,9 +68,8 @@ class Connection:
             self.__connection.rollback()
             raise Exception('exception update sql {}, fail: {}'.format(sql_script, fail), True)
 
-
     @staticmethod
     def get_file_sql(file_name):
-        with open('C:\\Jave\\CSAPIService\\sqls\\{}'.format(file_name)) as file:
+        with open('sqls//{}'.format(file_name)) as file:
             sql = file.read()
         return sql

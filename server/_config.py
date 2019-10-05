@@ -62,17 +62,13 @@ class Token:
 
 
 def read_archive(file_name):
-    path = Path(file_name)
-    if path.is_file():
-        try:
-            with open(file_name, 'r') as file:
-                archive_config = json.loads(file.read())
+    try:
+        with open('C:\\Jave\\CSAPIService\\{}'.format(file_name), 'r') as file:
+            archive_config = json.loads(file.read())
 
-            return archive_config
-        except Exception as fail:
-            raise Exception('fail read config file {}, fail: {}'.format(file_name, fail))
-    else:
-        raise Exception('fail! No exists {} in directory'.format(file_name))
+        return archive_config
+    except Exception as fail:
+        raise Exception('fail read config file {}, fail: {}'.format(file_name, fail))
 
 
 def generate_log(log, fail=False):
@@ -84,24 +80,20 @@ def generate_log(log, fail=False):
         name_archive = config.get_key('log')
 
     if config.get_key('generate_log') == 'yes':
-        log_file = '{}.{}'.format(name_archive, config.get_key('extension'))
+        log_file = 'C:\\Jave\\CSAPIService\\{}.{}'.format(name_archive, config.get_key('extension'))
 
         with open(log_file, 'a') as file:
             file.writelines('{}: {}!\n'.format(datetime.datetime.now(), log.replace('\n', ' -- ').lower()))
 
 
 def get_list_exclude():
-    file_read = Path('exclude.lst')
-    if file_read.is_file():
-        try:
-            exclude = []
-            with open(file_read, 'r') as file:
-                for line in file.readlines():
-                    line = line.replace('\n', '')
-                    exclude.append(line)
+    try:
+        exclude = []
+        with open('C:\\Jave\\CSAPIService\\exclude.lst', 'r') as file:
+            for line in file.readlines():
+                line = line.replace('\n', '')
+                exclude.append(line)
 
-            return exclude
-        except Exception as fail:
-            raise Exception('fail read exclude files {}, fail: {}'.format(file_read, fail))
-    else:
-        return []
+        return exclude
+    except Exception as fail:
+        raise Exception('fail read exclude files, fail: {}'.format(fail))

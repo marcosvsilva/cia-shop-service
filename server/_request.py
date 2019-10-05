@@ -67,3 +67,5 @@ class Request:
                                                                                      ['message']))
         except Exception as fail:
             raise Exception('exception api post, fail: {}'.format(fail))
+
+    config = Config()

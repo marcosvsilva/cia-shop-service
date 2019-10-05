@@ -4,11 +4,12 @@ import sys
 import win32event
 import win32service
 import win32serviceutil
-from _config import Config
+from _config import Config,  generate_log
 from _application import Application
 
 # Command line pyinstaller create servicemanager
 # pyinstaller -F --hidden-import=win32timezone service.py
+
 
 class CSAPIServer(win32serviceutil.ServiceFramework):
     _svc_name_ = "CSAPIServer"
@@ -28,10 +29,15 @@ class CSAPIServer(win32serviceutil.ServiceFramework):
         config = Config()
         application = Application()
         while rc != win32event.WAIT_OBJECT_0:
-            time_to_sleep = int(config.get_key('sleep_timer_synchronize')) * 1000
-            application.synchronize()
+            try:
+                time_to_sleep = int(config.get_key('sleep_timer_synchronize')) * 1000
+                application.synchronize()
 
-            rc = win32event.WaitForSingleObject(self.hWaitStop, time_to_sleep)
+                rc = win32event.WaitForSingleObject(self.hWaitStop, time_to_sleep)
+            except Exception as fail:
+                generate_log('crash synchronize, fail: {}, restart in {} minuts'.format(
+                    fail, 10), fail=True)
+                rc = win32event.WaitForSingleObject(self.hWaitStop, 600000)
 
 
 if __name__ == '__main__':

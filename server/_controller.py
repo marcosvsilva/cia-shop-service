@@ -75,13 +75,16 @@ class ProductController(Controller):
 
     def update_products_api(self, products_update):
         try:
-            return self._update_api('products', products_update)
+            if len(products_update) > 0:
+                return self._update_api('products', products_update)
+            else:
+                return None
         except Exception as fail:
             raise Exception('fail update products to api, fail: {}'.format(fail))
 
     def get_products_database(self):
         try:
-            columns_products = ['erpId', 'id', 'mainDepartmentId', 'brand']
+            columns_products = ['erpId', 'id', 'variantId', 'mainDepartmentId', 'brand']
             columns_filters = ['erpId', 'name', 'values']
             products = self._get_database('products', self._get_sql('get_products.sql'), columns_products)
             filters_products = self._get_database('filter', self._get_sql('get_filters.sql'), columns_filters)
@@ -107,7 +110,17 @@ class ProductController(Controller):
                 generate_log('update database: product {} ciashop_id {}'.format(key, str(value)))
             except Exception as fail:
                 raise Exception('fail to database update product {}, fail: {}'.format(key, fail))
-    
+
+    def update_variants_database(self, keys_values):
+        for key, value in keys_values.items():
+            try:
+                list_update = [(value, key)]
+                sql_update = self._get_sql('update_csi_id_variants.sql')
+                self._update_database(sql_update, list_update)
+                generate_log('update database: product {} variants_id {}'.format(key, str(value)))
+            except Exception as fail:
+                raise Exception('fail to database update product variants {}, fail: {}'.format(key, fail))
+
     def update_department_id(self):
         try:
             sql_script = self._get_sql('script_update_deparment_products.sql')

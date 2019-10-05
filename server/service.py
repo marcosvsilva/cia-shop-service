@@ -4,7 +4,7 @@ import sys
 import win32event
 import win32service
 import win32serviceutil
-from _config import Config,  generate_log
+from _config import Config, generate_log
 from _application import Application
 
 # Command line pyinstaller create servicemanager
@@ -35,8 +35,8 @@ class CSAPIServer(win32serviceutil.ServiceFramework):
 
                 rc = win32event.WaitForSingleObject(self.hWaitStop, time_to_sleep)
             except Exception as fail:
-                generate_log('crash synchronize, fail: {}, restart in {} minuts'.format(
-                    fail, 10), fail=True)
+                message = 'crash synchronize, fail: {}, restart in {} minutes'.format(fail, 10)
+                generate_log(message, fail=True)
                 rc = win32event.WaitForSingleObject(self.hWaitStop, 600000)
 
 

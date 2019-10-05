@@ -215,5 +215,5 @@ class Application:
         return re.sub('[^a-zA-Z0-9 \\\]', '', clean_string)
 
 
-application = Application()
-application.synchronize()
+# application = Application()
+# application.synchronize()

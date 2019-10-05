@@ -1,13 +1,16 @@
 from _controller import ProductController, DepartmentController
 from _config import Config, generate_log, get_list_exclude
+import unicodedata
+import re
 
 actions = {
     1: 'update database api id products',
     2: 'update database api id departments',
-    3: 'update database products departments',
-    4: 'update api departments products',
-    5: 'update api brands',
-    6: 'update api filters'
+    3: 'update database api id variants',
+    4: 'update database products departments',
+    5: 'update api departments products',
+    6: 'update api brands',
+    7: 'update api filters'
 }
 
 
@@ -45,18 +48,19 @@ class Application:
                 self.execute_action(actions[1])
                 self.execute_action(actions[2])
                 self.execute_action(actions[3])
+                self.execute_action(actions[4])
 
                 # Finishing process update products database, necessary reload products
                 self._products_database = self._product_controller.get_products_database()
 
-                self.execute_action(actions[4])
                 self.execute_action(actions[5])
                 self.execute_action(actions[6])
+                self.execute_action(actions[7])
 
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
-                generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))                
+                generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
             except Exception as fail:
-                generate_log('crash synchronize, fail: {}'.format(fail), fail=True)
+                raise Exception('crash process {}'.format(fail))
 
     def execute_action(self, action):
         generate_log('start process {}'.format(action))
@@ -68,15 +72,18 @@ class Application:
             self.update_database_api_id_departments()
 
         if action == actions[3]:
-            self.update_database_products_departments()
+            self.update_database_api_id_variants()
 
         if action == actions[4]:
-            self.update_api_departments_products()
+            self.update_database_products_departments()
 
         if action == actions[5]:
-            self.update_api_brands()
+            self.update_api_departments_products()
 
         if action == actions[6]:
+            self.update_api_brands()
+
+        if action == actions[7]:
             self.update_api_filters()
 
         generate_log('finishing process {}'.format(action))
@@ -90,7 +97,7 @@ class Application:
                     products_api = list(products_api)
 
                     if len(products_api) == 0:
-                        generate_log('product {} not found in ciashop'.format(product_database['erpId']))
+                        generate_log('product erpId: {} not found in ciashop'.format(product_database['erpId']))
 
                     for product_api in products_api:
                         if product_database['id'] != product_api['id']:
@@ -108,7 +115,7 @@ class Application:
                     departments_api = list(departments_api)
 
                     if len(departments_api) == 0:
-                        generate_log('department {} not found in ciashop'.format(departments_database['erpId']))
+                        generate_log('department erpId: {} not found in ciashop'.format(departments_database['erpId']))
 
                     for department_api in departments_api:
                         if departments_database['id'] != department_api['id']:
@@ -116,21 +123,34 @@ class Application:
 
         self._departments_controller.update_departments_database(values_keys)
 
+    def update_database_api_id_variants(self):
+        values_keys = {}
+        for product_database in self._products_database:
+            if product_database['erpId'] not in self.excludes:
+                products_api = filter(lambda x: x['erpId'] == product_database['erpId'], self._products_api)
+                products_api = list(products_api)
+
+                if len(products_api) == 0:
+                    generate_log('product erpId: {} not found in ciashop'.format(product_database['erpId']))
+
+                for product_api in products_api:
+                    if product_database['variantId'] != product_api['mainVariantId']:
+                        values_keys.update({product_database['erpId']: product_api['mainVariantId']})
+
+        self._product_controller.update_variants_database(values_keys)
+
     def update_database_products_departments(self):
         self._product_controller.update_department_id()
 
     def update_api_departments_products(self):
         products_department_update = {}
         for product_api in self._products_api:
-            if product_api['erpId'] == 'testeprodutook':
-                aux = 0
-
             if product_api['erpId'] not in self.excludes:
                 products_database = filter(lambda x: x['erpId'] == product_api['erpId'], self._products_database)
                 products_database = list(products_database)
 
                 if len(products_database) == 0:
-                    generate_log('product {} not found in database'.format(product_api['erpId']))
+                    generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
                     if product_api['mainDepartmentId'] != product_database['mainDepartmentId']:
@@ -147,7 +167,7 @@ class Application:
                 products_database = list(products_database)
 
                 if len(products_database) == 0:
-                    generate_log('product {} not found in database'.format(product_api['erpId']))
+                    generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
                     if 'brand' in product_database:
@@ -155,10 +175,11 @@ class Application:
                         brand = product_database['brand']['name']
 
                         if product_api['marketplaceManufacturerName'] != brand:
-                            list_update.update({'marketplaceDescription': product_api['name']})
+                            name = self.remove_special_char(product_api['name'])
+                            list_update.update({'marketplaceProductName': name})
+                            list_update.update({'marketplaceDescription': name})
                             list_update.update({'marketplaceManufacturerName': brand})
-
-                        products_brands_update.update({product_api['id']: list_update})
+                            products_brands_update.update({product_api['id']: list_update})
 
         self._product_controller.update_products_api(products_brands_update)
 
@@ -170,7 +191,7 @@ class Application:
                 products_database = list(products_database)
 
                 if len(products_database) == 0:
-                    generate_log('product {} not found in database'.format(product_api['erpId']))
+                    generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
                     if ('filters' in product_database) and ('filters' in product_api):
@@ -186,6 +207,12 @@ class Application:
                                 {product_api['id']: {'filters': product_database['filters']}})
 
         self._product_controller.update_products_api(products_filters_update)
+
+    @staticmethod
+    def remove_special_char(string):
+        nfkd = unicodedata.normalize('NFKD', string)
+        clean_string = u"".join([c for c in nfkd if not unicodedata.combining(c)])
+        return re.sub('[^a-zA-Z0-9 \\\]', '', clean_string)
 
 
 application = Application()

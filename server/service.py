@@ -35,9 +35,9 @@ class CSAPIServer(win32serviceutil.ServiceFramework):
 
                 rc = win32event.WaitForSingleObject(self.hWaitStop, time_to_sleep)
             except Exception as fail:
-                message = 'crash synchronize, fail: {}, restart in {} minutes'.format(fail, 10)
+                message = 'crash synchronize, fail: {}, restart in {} minutes'.format(fail, 60)
                 generate_log(message, fail=True)
-                rc = win32event.WaitForSingleObject(self.hWaitStop, 600000)
+                rc = win32event.WaitForSingleObject(self.hWaitStop, 3600000)
 
 
 if __name__ == '__main__':

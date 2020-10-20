@@ -59,12 +59,11 @@ class Request:
                 if response.status_code == 200:
                     generate_log('update {}, key {}, success! link {}'.format(table, key, response_json['url']))
                 else:
-                    raise Exception('update {}, key {}, fail! fail: {}: {} - {}'.format(table,
-                                                                                     key,
-                                                                                     response.status_code,
-                                                                                     response_json['message'],
-                                                                                     response_json['errors'][0]
-                                                                                     ['message']))
+                    raise Exception('update {}, key {}, fail! fail: {}: {} - {}'.format(table, key,
+                                                                                        response.status_code,
+                                                                                        response_json['message'],
+                                                                                        response_json['errors'][0]
+                                                                                        ['message']))
         except Exception as fail:
             raise Exception('exception api post, fail: {}'.format(fail))
 

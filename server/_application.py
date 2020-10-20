@@ -37,6 +37,7 @@ class Application:
             try:
                 self.excludes = get_list_exclude()
 
+                generate_log('---------------------------------------------------------------')
                 generate_log('start process synchronize')
 
                 self._products_api = self._product_controller.get_products_api()
@@ -56,6 +57,9 @@ class Application:
                 self.execute_action(actions[5])
                 self.execute_action(actions[6])
                 self.execute_action(actions[7])
+
+                generate_log('end process synchronize')
+                generate_log('---------------------------------------------------------------')
 
                 time_to_sleep = int(self._config.get_key('sleep_timer_synchronize'))
                 generate_log('application waiting {} seconds to synchronize'.format(time_to_sleep))
@@ -153,6 +157,9 @@ class Application:
                     generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
+                    if product_database['mainDepartmentId'] < 0:
+                        continue
+
                     if product_api['mainDepartmentId'] != product_database['mainDepartmentId']:
                         products_department_update.update(
                             {product_api['id']: {'mainDepartmentId': product_database['mainDepartmentId']}})
@@ -170,6 +177,11 @@ class Application:
                     generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
+                    if product_database['mainDepartmentId'] < 0:
+                        generate_log('product erpId:{} brand not update because mainDepartmentId is null!'.format(
+                            product_database['erpId']))
+                        continue
+
                     if 'brand' in product_database:
                         list_update = {}
                         brand = product_database['brand']['name']
@@ -194,19 +206,38 @@ class Application:
                     generate_log('product erpId: {} not found in database'.format(product_api['erpId']))
 
                 for product_database in products_database:
+                    if product_database['mainDepartmentId'] < 0:
+                        generate_log('product erpId:{} filters not update because mainDepartmentId is null!'.format(
+                            product_database['erpId']))
+                        continue
+
                     if ('filters' in product_database) and ('filters' in product_api):
+                        database_filters = product_database['filters']
+                        api_filters = product_api['filters']
 
-                        hash_filters_database = str(product_database['filters'])
-                        hash_filters_api = str(product_api['filters'])
-
-                        hash_filters_database = sorted(hash_filters_database.upper())
-                        hash_filters_api = sorted(hash_filters_api.upper())
-
-                        if hash_filters_database != hash_filters_api:
-                            products_filters_update.update(
-                                {product_api['id']: {'filters': product_database['filters']}})
+                        for database_field in database_filters:
+                            api_field = self.get_field(api_filters, database_field['name'])
+                            if api_field is None:
+                                products_filters_update.update(
+                                    {product_api['id']: {'filters': product_database['filters']}})
+                                print('Add field database_fields {} api_fields: {}'.format(database_field, api_filters))
+                            else:
+                                if api_field['values'] != database_field['values']:
+                                    products_filters_update.update(
+                                        {product_api['id']: {'filters': product_database['filters']}})
+                                    print(
+                                        'Add field database_fields {} api_fields: {}'.format(database_field, api_filters))
 
         self._product_controller.update_products_api(products_filters_update)
+
+    def get_field(self, list_field, name_field):
+        result = None
+        for field in list_field:
+            if self.remove_special_char(field['name'].upper()) == self.remove_special_char(name_field.upper()):
+                result = field
+                continue
+
+        return result
 
     @staticmethod
     def remove_special_char(string):

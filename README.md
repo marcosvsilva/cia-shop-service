@@ -1,4 +1,4 @@
-# CiaShopServer
+# cia-shop-service
 ### Service developed to communicate with the Ciashop API.
 #### A permissive license similar to the [BSD 2-Clause License](https://github.com/marcosvsilva/CiaShopServer/blob/master/LICENSE)
 
